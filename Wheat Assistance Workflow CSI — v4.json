@@ -1,0 +1,3499 @@
+﻿{
+  "name": "Wheat Assistance Workflow CSI โ€” v4",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        12976,
+        17056
+      ],
+      "id": "56178b01-5694-4bfc-bc7e-11a23b23c4cb",
+      "name": "SC Telegram Trigger",
+      "webhookId": "e50314df-cdc4-4590-830c-4e7bc359ba9f",
+      "credentials": {
+        "telegramApi": {
+          "id": "xWk7JxQpFdncxgK8",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c5ac4d37-4958-410c-a887-4e84e8cf737f",
+              "name": "text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "b7487a87-3183-4120-a334-ff14829d1d15",
+              "name": "user_id",
+              "value": "={{ $json.message.from.id }}",
+              "type": "string"
+            },
+            {
+              "id": "5f60e8b4-0726-4502-97b6-396414b24c19",
+              "name": "chat_id",
+              "value": "={{ $json.message.chat.id }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        13200,
+        17056
+      ],
+      "id": "ebb2bf4c-2c09-466d-948e-d50c507ef3b9",
+      "name": "SC Edit Fields"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw",
+          "mode": "list",
+          "cachedResultName": "CSI-N8N",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 977037527,
+          "mode": "list",
+          "cachedResultName": "Plant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit#gid=977037527"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "user_id",
+              "lookupValue": "={{ $('SC Edit Fields').item.json.user_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        14096,
+        17552
+      ],
+      "id": "0675c24e-7c39-4ad8-b44a-ac1287f18ae9",
+      "name": "SC Get Plants Sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gbueDM6lM7sb1f5b",
+          "name": "MALIN8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw",
+          "mode": "list",
+          "cachedResultName": "CSI-N8N",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1615475223,
+          "mode": "list",
+          "cachedResultName": "Plant_Price",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit#gid=1615475223"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        14320,
+        17552
+      ],
+      "id": "910fb8ee-33a4-469b-8c47-e7b6021cd882",
+      "name": "SC Get Price Data",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gbueDM6lM7sb1f5b",
+          "name": "MALIN8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst items = $('SC Get Plants Sheet').all();\nconst lines = items.map(i => {\n  const p = i.json;\n  return `[${p.plant_id}] ${p.plant_species||''} | ${p.location||''} | ${p.status||''} | เน€เธฃเธดเนเธก ${p.start_date||''} | stage: ${p.growth_stage_th||p.growth_stage||'-'}`;\n});\nreturn [{ json: { plants_string: lines.length>0 ? 'USER PLANTS:\\n'+lines.join('\\n') : 'USER PLANTS: (เธขเธฑเธเนเธกเนเธกเธตเนเธเธฅเธ)' } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        14768,
+        17552
+      ],
+      "id": "abb3a9b8-edd3-4a86-9832-ea09a1460756",
+      "name": "SC Format Plants String"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = ($('SC Edit Fields').item.json.text || '').trim();\n\n// เธชเธฃเนเธฒเธเธงเธฑเธเธ—เธตเนเนเธฅเธฐเน€เธงเธฅเธฒเธเธฑเธเธเธธเธเธฑเธ (Bangkok Time) เธฃเธนเธเนเธเธ YYYY-MM-DD HH:mm:ss\nconst now = new Date();\nconst offset = 7 * 60; // UTC+7\nconst bangkokTime = new Date(now.getTime() + (offset + now.getTimezoneOffset()) * 60000);\nconst today = bangkokTime.toISOString().replace('T', ' ').substring(0, 19);\n\nconst cmdMatch = text.match(/^\\/([^\\s]+)(?:\\s+(.*))?$/s);\nlet command = 'ask', rawArgs = text;\n\nif (cmdMatch) {\n  const cmd = cmdMatch[1].toLowerCase();\n  rawArgs = (cmdMatch[2] || '').trim();\n  if (['เธเธฅเธนเธ','plant','create'].includes(cmd))                 command = 'create';\n  else if (['เนเธเน','เนเธเนเนเธ','update','edit'].includes(cmd))      command = 'update';\n  else if (['เธ–เธฒเธก','ask','เธเธณเธ–เธฒเธก'].includes(cmd))                command = 'ask';\n  else if (['เธฅเธ','delete','remove'].includes(cmd))             command = 'delete';\n  else if (['เธฃเธฒเธเธฒ','price'].includes(cmd))                     command = 'price';\n  else if (['เนเธเธฅเธ','myplants','plot'].includes(cmd))           command = 'myplants';\n  else if (['help','เธเนเธงเธข','start'].includes(cmd))              command = 'help';\n  else if (['เธขเธทเธเธขเธฑเธเนเธเน','confirmupdate','confirm_update'].includes(cmd))   command = 'confirm_update';\n  else if (['เธขเธทเธเธขเธฑเธเธฅเธ','confirmdelete','confirm_delete'].includes(cmd))    command = 'confirm_delete';\n  else if (['เธขเธเน€เธฅเธดเธ','cancel'].includes(cmd))                  command = 'cancel';\n  else                                                         command = 'unknown';\n} else {\n  command = 'ask';\n}\n\nlet cmd_rice_type='', cmd_location='', cmd_area_rai=1, cmd_start_date = today; // เนเธเนเธเนเธฒ today (Now) เน€เธเนเธเธเนเธฒเน€เธฃเธดเนเธกเธ•เนเธ\nlet cmd_plant_id='', tmp=rawArgs;\n\nif (command === 'create') {\n  // เธ•เธฃเธงเธเธชเธญเธเธเธณเธเธงเธเนเธฃเน\n  const areaM = tmp.match(/(\\d+(?:\\.\\d+)?)\\s*เนเธฃเน/);\n  if (areaM) { cmd_area_rai=parseFloat(areaM[1]); tmp=tmp.replace(areaM[0],'').trim(); }\n  \n  // เธ•เธฃเธงเธเธชเธญเธเธงเธฑเธเธ—เธตเน (เธ–เนเธฒเธเธนเนเนเธเนเธเธดเธกเธเนเธงเธฑเธเธ—เธตเนเธกเธฒเน€เธญเธ เน€เธเนเธ 2026-01-01 เนเธซเนเนเธเนเธเนเธฒเธ—เธตเนเธเธนเนเนเธเนเธเธดเธกเธเน)\n  const dateM = tmp.match(/(\\d{4}-\\d{2}-\\d{2})/);\n  if (dateM) { \n    cmd_start_date=dateM[1]; \n    tmp=tmp.replace(dateM[0],'').trim(); \n  }\n  \n  const parts = tmp.split(/\\s+/);\n  if (parts.length>=2) { cmd_rice_type=parts[0]; cmd_location=parts.slice(1).join(' '); }\n  else if (parts.length===1) cmd_rice_type=parts[0];\n}\n\nif (['update','delete','confirm_update','confirm_delete'].includes(command)) {\n  const pidM = rawArgs.match(/PLANT-[\\w-]+/i);\n  if (pidM) cmd_plant_id=pidM[0];\n}\n\nconst plantsStr = $input.first().json.plants_string || '';\n\nreturn [{ json: {\n  command, \n  cmd_rice_type, \n  cmd_location, \n  cmd_area_rai, \n  cmd_start_date, // เธเธฐเน€เธเนเธเน€เธงเธฅเธฒเธเธฑเธเธเธธเธเธฑเธเธ—เธฑเธเธ—เธตเธ–เนเธฒเนเธกเนเนเธ”เนเธฃเธฐเธเธธเธงเธฑเธเธ—เธตเนเธกเธฒ\n  cmd_plant_id, \n  cmd_raw_args: rawArgs || text, \n  plants_string: plantsStr,\n  original_text: text,\n  generated_at: today\n} }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        14992,
+        17552
+      ],
+      "id": "3589a222-68c4-4d28-918e-4bad6ab0e469",
+      "name": "SC Parse Command"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "5f4a0c71-22a9-4718-b47e-623324f7f011",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "create",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "เธเธฅเธนเธ"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "458febdc-9cf4-4979-9ff1-d4fd26ee23e9",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "update",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "เนเธเน"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0fb79a2b-5349-4989-928e-37619b6847a0",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "ask",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "เธ–เธฒเธก"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "998ca6e0-3357-4f93-bd69-31d2f0a79a8f",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "delete",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "เธฅเธ"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "5f52597b-e413-452d-82fa-bca80b23ae48",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "price",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "เธฃเธฒเธเธฒ"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "fadebb43-2ef8-4269-8d7b-0a88f58fce40",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "myplants",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "เนเธเธฅเธ"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "help-route-001",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "help",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "help"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "unknown-route-001",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "unknown",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "unknown"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "route-confirm_update",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "confirm_update",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "confirm_update"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "route-confirm_delete",
+                    "leftValue": "={{ $json.command }}",
+                    "rightValue": "confirm_delete",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "confirm_delete"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        15216,
+        17424
+      ],
+      "id": "0eb3a38f-6661-4163-b092-18df8a4099f4",
+      "name": "SC Command Switch"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.cmd_raw_args }}",
+        "options": {
+          "systemMessage": "=เธเธธเธ“เธเธทเธญ \"เธเนเธญเธเนเธเนเธช\" โ€” AI เธเธนเนเธเนเธงเธขเธ”เนเธฒเธเธเธฒเธฃเธเธฅเธนเธเธเนเธฒเธง เธ•เธญเธเน€เธเนเธเธ เธฒเธฉเธฒเนเธ—เธขเน€เธชเธกเธญ\n\nTODAY (เธงเธฑเธเธ—เธตเนเธเธฑเธเธเธธเธเธฑเธเธเธญเธเธฃเธฐเธเธ): {{ $json.cmd_start_date }}\nUSER_PLANTS (READ-ONLY): {{ $json.plants_string }}\n\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\nSLASH COMMAND: /เธเธฅเธนเธ โ€” เธเธฑเธเธ—เธถเธเนเธเธฅเธเนเธซเธกเน\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\nARGS เธ—เธตเนเธฃเธฐเธเธ parse เธกเธฒเนเธซเน:\n- เธเธเธดเธ”เธเนเธฒเธง: {{ $json.cmd_rice_type }}\n- เธเธฑเธเธซเธงเธฑเธ”: {{ $json.cmd_location }}\n- เธเธณเธเธงเธเนเธฃเน: {{ $json.cmd_area_rai }}\n- เธงเธฑเธเธ—เธตเนเธฃเธฐเธเธเน€เธ•เธฃเธตเธขเธกเนเธงเนเนเธซเน: {{ $json.cmd_start_date }}\n\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\nVALIDATION RULES (เธเธเธเธฒเธฃเธ•เธฃเธงเธเธชเธญเธ)\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\nเธเนเธญเธกเธนเธฅเธ—เธตเน \"เธ•เนเธญเธเธกเธต\" เธเธฒเธเธเธณเธเธนเธ”เธเธนเนเนเธเนเธซเธฃเธทเธญเธเธฒเธเธฃเธฐเธเธ:\n  1. rice_type โ€” เธเธเธดเธ”เธเนเธฒเธง\n  2. location  โ€” เธเธฑเธเธซเธงเธฑเธ” (เธเธทเนเธญเน€เธ•เนเธก)\n  3. start_date โ€” **เธชเธณเธเธฑเธ: เธซเธฒเธเธเธนเนเนเธเนเนเธกเนเธฃเธฐเธเธธ เนเธซเนเนเธเนเธเนเธฒเธเธฒเธ \"เธงเธฑเธเธ—เธตเนเธฃเธฐเธเธเน€เธ•เธฃเธตเธขเธกเนเธงเนเนเธซเน\" ({{ $json.cmd_start_date }}) เนเธ”เนเธ—เธฑเธเธ—เธต เธซเนเธฒเธกเนเธเนเธเธงเนเธฒเธเธฒเธ”เธเนเธญเธกเธนเธฅ**\n\nเธเธ MISSING DATA โ€” เธเธฐเธ–เธทเธญเธงเนเธฒเธเนเธญเธกเธนเธฅเนเธกเนเธเธฃเธเน€เธเธเธฒเธฐเธเธฃเธ“เธต:\n  - เนเธกเนเธฃเธนเนเธเธเธดเธ”เธเนเธฒเธง (rice_type)\n  - เนเธกเนเธฃเธนเนเธเธฑเธเธซเธงเธฑเธ” (location)\n  *(เธซเธฒเธเธเธฒเธ”เนเธเนเธงเธฑเธเธ—เธตเน เนเธซเนเนเธเนเธเนเธฒเธเธฒเธเธฃเธฐเธเธเนเธ—เธ เธซเนเธฒเธกเธ–เธฒเธกเธซเธฒ)*\n\nเธ•เธฑเธงเธญเธขเนเธฒเธ reply เน€เธกเธทเนเธญเธเนเธญเธกเธนเธฅเนเธกเนเธเธฃเธ (เธเธฒเธ”เธเนเธฒเธงเธซเธฃเธทเธญเธเธฑเธเธซเธงเธฑเธ”):\n  \"เธเธญเธเนเธญเธกเธนเธฅเน€เธเธดเนเธกเน€เธ•เธดเธกเธเธฐเธเธฐ ๐พ\n  เธเนเธญเธกเธนเธฅเธ—เธตเนเธขเธฑเธเธเธฒเธ”เธญเธขเธนเน:\n  - เธเธเธดเธ”เธเนเธฒเธง (เน€เธเนเธ เธเนเธฒเธงเธกเธฐเธฅเธด, เธเนเธฒเธง เธเธ6)\n  - เธเธฑเธเธซเธงเธฑเธ” (เน€เธเนเธ เธชเธเธเธฅเธฒ, เน€เธเธตเธขเธเนเธซเธกเน)\n  เนเธเนเธชเธฃเธญเธเนเธงเธขเธญเธขเธนเนเธเธฐเธเธฐ ๐’\"\n\nLOCATION RULES:\n- เนเธเธฅเธเธเธทเนเธญเธขเนเธญเน€เธเนเธเธเธทเนเธญเธเธฑเธเธซเธงเธฑเธ”เน€เธ•เนเธก: เธเธ—เธกโ’เธเธฃเธธเธเน€เธ—เธเธกเธซเธฒเธเธเธฃ | เนเธเธฃเธฒเธโ’เธเธเธฃเธฃเธฒเธเธชเธตเธกเธฒ | เนเธเธ”เธฃเธดเนเธงโ’เธเธฐเน€เธเธดเธเน€เธ—เธฃเธฒ\n\nเธเธ SUCCESS โ€” เธซเธฒเธเธเนเธญเธกเธนเธฅเธเธฃเธ:\n- start_date: เนเธซเนเนเธเนเธเนเธฒเธเธฒเธ {{ $json.cmd_start_date }}\n- end_date: เธเธณเธเธงเธ“เธเธฒเธ start_date + 120 เธงเธฑเธ\n- area_rai: เนเธเนเธเนเธฒ {{ $json.cmd_area_rai }} (เธ–เนเธฒเนเธกเนเธกเธตเนเธซเนเนเธเน 1)\n- water_frequency_days: 3\n\nOUTPUT (JSON เน€เธ—เนเธฒเธเธฑเนเธ):\n{\"action\":\"create_plant\",\"reply_message\":\"เธชเธฃเธธเธเธเนเธญเธกเธนเธฅเนเธเธฅเธ, เธเธงเธฒเธกเน€เธชเธตเนเธขเธ, เธเธณเนเธเธฐเธเธณ, เนเธฅเธฐเธเธฃเธฐเนเธขเธเนเธซเนเธเธณเธฅเธฑเธเนเธ\",\"sheet_name\":\"rice_fields\",\"data\":{\"rice_type\":\"...\",\"location\":\"...\",\"area_rai\":... , \"water_frequency_days\":3,\"start_date\":\"{{ $json.cmd_start_date }}\",\"end_date\":\"...\",\"status\":\"Active\"}}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        15440,
+        16864
+      ],
+      "id": "0ac08eb0-4030-4dc3-bf6f-c5fba218082b",
+      "name": "SC AI Create"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nfunction clean(t){ return (t||'').replace(/\\*\\*/g,'').replace(/\\*/g,'').replace(/_/g,'').replace(/`/g,'').replace(/\\[/g,'').replace(/\\]/g,'').replace(/\\(/g,'').replace(/\\)/g,''); }\nconst raw = $input.first().json.output || '';\nlet cleaned = raw.replace(/```json/g,'').replace(/```/g,'').trim();\nlet parsed;\ntry {\n  parsed = JSON.parse(cleaned);\n  if (parsed.data) {\n    parsed.data.area_rai ??= 1;\n    parsed.data.water_frequency_days ??= 3;\n    parsed.data.status ??= 'Active';\n    parsed.data.last_watered_date ??= null;\n    parsed.data.fertilizer ??= null;\n    delete parsed.data.growth_stage;\n    delete parsed.data.growth_stage_th;\n  }\n  if (parsed.reply_message) parsed.reply_message = clean(parsed.reply_message);\n} catch(e) {\n  parsed = { action:'none', reply_message:clean(raw), data:{}, sheet_name:'none' };\n}\nreturn [{ json: { parsed } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        15792,
+        16960
+      ],
+      "id": "e3c729eb-a2f4-404a-b96e-2e295bb03d83",
+      "name": "SC Parse Create"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst now = new Date();\nconst ts = now.toISOString().replace(/[-:TZ.]/g,'').slice(0,14);\nconst rand = Math.floor(Math.random()*1000).toString().padStart(3,'0');\nreturn [{ json: { plant_id: `PLANT-${ts}-${rand}` } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        16240,
+        16864
+      ],
+      "id": "3d3025b4-54e0-437e-9203-808f7b3afab5",
+      "name": "SC Gen Plant ID"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw",
+          "mode": "list",
+          "cachedResultName": "CSI-N8N",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 977037527,
+          "mode": "list",
+          "cachedResultName": "Plant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit#gid=977037527"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "plant_id": "={{ $('SC Gen Plant ID').item.json.plant_id }}",
+            "user_id": "={{ $('SC Edit Fields').item.json.user_id }}",
+            "plant_species": "={{ $('SC Parse Create').item.json.parsed.data.rice_type }}",
+            "location": "={{ $('SC Parse Create').item.json.parsed.data.location }}",
+            "start_date": "={{ $('SC Parse Create').item.json.parsed.data.start_date }}",
+            "end_date": "=",
+            "status": "={{ $('SC Parse Create').item.json.parsed.data.status }}",
+            "fertilizer": "={{ $('SC Parse Create').item.json.parsed.data.fertilizer }}",
+            "area": "={{ $('SC Parse Create').item.json.parsed.data.area_rai }}",
+            "water_frequency_days": "={{ $('SC Parse Create').item.json.parsed.data.water_frequency_days }}",
+            "growth_stage": "=Germination",
+            "growth_stage_th": "=เธฃเธฐเธขเธฐเธเธญเธ",
+            "updated_at": "={{ $now.setZone('Asia/Bangkok').toFormat('yyyy-MM-dd') }}",
+            "harvest_date": "="
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "plant_id",
+              "displayName": "plant_id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "user_id",
+              "displayName": "user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "plant_species",
+              "displayName": "plant_species",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "area",
+              "displayName": "area",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "water_frequency_days",
+              "displayName": "water_frequency_days",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "last_watered_date",
+              "displayName": "last_watered_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "fertilizer",
+              "displayName": "fertilizer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "start_date",
+              "displayName": "start_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "end_date",
+              "displayName": "end_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "growth_stage",
+              "displayName": "growth_stage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "growth_stage_th",
+              "displayName": "growth_stage_th",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "harvest_date",
+              "displayName": "harvest_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        16464,
+        16864
+      ],
+      "id": "6d577676-0602-41e5-973e-c7207f51825c",
+      "name": "SC Append Row",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gbueDM6lM7sb1f5b",
+          "name": "MALIN8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('SC Edit Fields').item.json.chat_id }}",
+        "text": "={{ $('SC Parse Create').item.json.parsed.reply_message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        16688,
+        16864
+      ],
+      "id": "9fbc2a41-fa7b-4fb5-8175-68b4a9abe904",
+      "name": "SC Send Create",
+      "webhookId": "dc0c410b-9a25-4ce4-97f0-852ae8705dba",
+      "credentials": {
+        "telegramApi": {
+          "id": "xWk7JxQpFdncxgK8",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.cmd_raw_args }}",
+        "options": {
+          "systemMessage": "=เธเธธเธ“เธเธทเธญ \"เธเนเธญเธเนเธเนเธช\" โ€” AI เธเธนเนเธเนเธงเธขเธ”เนเธฒเธเธเธฒเธฃเธเธฅเธนเธเธเนเธฒเธง เธ•เธญเธเน€เธเนเธเธ เธฒเธฉเธฒเนเธ—เธขเน€เธชเธกเธญ\n\nTODAY: {{ $today }}\nUSER_PLANTS (READ-ONLY): {{ $json.plants_string }}\n\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\nSLASH COMMAND: /เนเธเน โ€” เธเธญเธขเธทเธเธขเธฑเธเธเนเธญเธเนเธเนเนเธเน€เธชเธกเธญ\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\nARGS:\n- cmd_plant_id : {{ $json.cmd_plant_id }}\n- cmd_raw_args : {{ $json.cmd_raw_args }}\n\nRULES:\n- plant_id เธ•เนเธญเธเธกเธฒเธเธฒเธ USER_PLANTS เน€เธ—เนเธฒเธเธฑเนเธ\n- เธ–เนเธฒเนเธกเนเธฃเธฐเธเธธ plant_id โ’ เน€เธฅเธทเธญเธ Active เธฅเนเธฒเธชเธธเธ”เธญเธฑเธ•เนเธเธกเธฑเธ•เธด\n- เนเธชเนเน€เธเธเธฒเธฐ field เธ—เธตเนเนเธเนเนเธเธเธฃเธดเธ\n- location เธ•เนเธญเธเธเธทเนเธญเธเธฑเธเธซเธงเธฑเธ”เน€เธ•เนเธกเธ—เธฒเธเธเธฒเธฃเน€เธชเธกเธญ\n\nเธเธฑเนเธเธ•เธญเธเธเธฑเธเธเธฑเธ โ€” เธซเนเธฒเธกเนเธเนเธ—เธฑเธเธ—เธต เธ•เนเธญเธเธเธญเธขเธทเธเธขเธฑเธเธเนเธญเธเน€เธชเธกเธญ:\n1. เธชเธฃเธธเธเธเนเธญเธกเธนเธฅเนเธเธฅเธเธเธฑเธเธเธธเธเธฑเธเน€เธ—เธตเธขเธเธเธฑเธเธเนเธญเธกเธนเธฅเธ—เธตเนเธเธฐเน€เธเธฅเธตเนเธขเธเนเธเธฅเธ (เน€เธ”เธดเธก โ’ เนเธซเธกเน) \n2. เธซเธฒเธเธเนเธฒเนเธซเธเนเธกเนเนเธ”เนเธชเธฑเนเธเนเธเน เนเธซเนเธเธเธเนเธญเธกเธนเธฅเน€เธ”เธดเธกเน€เธญเธฒเนเธงเน\n3. เธชเธณเธเธฑเธเธ—เธตเนเธชเธธเธ” (Stateless Payload): เธ•เนเธญเธเธชเธฃเนเธฒเธเธเนเธญเธเธงเธฒเธกเนเธซเน User เธเธฑเธ”เธฅเธญเธเน€เธเธทเนเธญเธชเนเธเธเธฅเธฑเธเธกเธฒเธขเธทเธเธขเธฑเธ เนเธ”เธขเธเธณเธชเธฑเนเธเธเธฑเนเธ **เธ•เนเธญเธเธเนเธงเธเธเนเธญเธกเธนเธฅเธ—เธฑเนเธเธซเธกเธ” (เธ—เธฑเนเธเธ—เธตเนเนเธเนเนเธซเธกเนเนเธฅเธฐเธเธญเธเน€เธ”เธดเธก)** เธ•เนเธญเธ—เนเธฒเธขเนเธเธ”เนเธงเธข เน€เธเธทเนเธญเนเธซเนเธฃเธฐเธเธเธเธ”เธเธณเนเธ”เน \nเธฃเธนเธเนเธเธเธเธณเธชเธฑเนเธเธ—เธตเนเธ•เนเธญเธเธชเธฃเนเธฒเธเนเธซเน User: `/เธขเธทเธเธขเธฑเธเนเธเน [plant_id] [เธเธเธดเธ”เธเนเธฒเธง] [เธเธฑเธเธซเธงเธฑเธ”] [เธเธทเนเธเธ—เธตเน]`\n\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\nOUTPUT (JSON ONLY):\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\n{\n  \"action\": \"pending_update\",\n  \"reply_message\": \"โ ๏ธ เธชเธฃเธธเธเธเนเธญเธกเธนเธฅเธเธฒเธฃเน€เธเธฅเธตเนเธขเธเนเธเธฅเธเธเธญเธเนเธเธฅเธเธเนเธฒเธง\\nโ€ข plant_id : {{ $json.cmd_plant_id }}\\nโ€ข เธเธเธดเธ”เธเนเธฒเธง : เธเนเธฒเธงเนเธเธ” โ’ เธเนเธฒเธงเธ•เธฑเธ\\nโ€ข เธชเธ–เธฒเธเธ—เธตเน : เธฃเธฒเธเธเธธเธฃเธต โ’ เธเธฃเธธเธเน€เธ—เธเธกเธซเธฒเธเธเธฃ\\nโ€ข เธเธทเนเธเธ—เธตเน : 67 เนเธฃเน โ’ 69 เนเธฃเน\\n\\nเธเธฃเธธเธ“เธฒเธเธฑเธ”เธฅเธญเธเธเนเธญเธเธงเธฒเธกเธ”เนเธฒเธเธฅเนเธฒเธเธเธตเนเนเธฅเนเธงเธชเนเธเธเธฅเธฑเธเธกเธฒเน€เธเธทเนเธญเธขเธทเธเธขเธฑเธเธเธฐเธเธฐ ๐‘\\n`/เธขเธทเธเธขเธฑเธเนเธเน {{ $json.cmd_plant_id }} เธเนเธฒเธงเธ•เธฑเธ เธเธฃเธธเธเน€เธ—เธเธกเธซเธฒเธเธเธฃ 69`\\n\\nเธซเธฃเธทเธญเธเธดเธกเธเน `/เธขเธเน€เธฅเธดเธ` เธซเธฒเธเธ•เนเธญเธเธเธฒเธฃเธขเธเน€เธฅเธดเธเธเธฒเธฃเนเธเนเนเธเธเนเธฐ\",\n  \"sheet_name\": \"rice_fields\",\n  \"data\": {\n    \"plant_id\": \"{{ $json.cmd_plant_id }}\",\n    \"rice_type\": \"เธเนเธฒเนเธซเธกเนเธ–เนเธฒเธกเธต (เธ–เนเธฒเนเธกเนเนเธเนเนเธซเนเนเธชเนเธเนเธฒเน€เธ”เธดเธก)\",\n    \"location\": \"เธเนเธฒเนเธซเธกเนเธ–เนเธฒเธกเธต (เธ–เนเธฒเนเธกเนเนเธเนเนเธซเนเนเธชเนเธเนเธฒเน€เธ”เธดเธก)\",\n    \"area_rai\": \"เนเธชเนเน€เธเธเธฒเธฐเธ•เธฑเธงเน€เธฅเธเน€เธ—เนเธฒเธเธฑเนเธ เน€เธเนเธ 69\",\n    \"water_frequency_days\": \"เน€เธฅเธเน€เธ”เธดเธก\"\n  }\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        15440,
+        17264
+      ],
+      "id": "3c61dd7e-dd1f-4a43-a1e7-7473b4321c4d",
+      "name": "SC AI Update"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nfunction clean(t){ return (t||'').replace(/\\*\\*/g,'').replace(/\\*/g,'').replace(/_/g,'').replace(/`/g,'').replace(/\\[/g,'').replace(/\\]/g,'').replace(/\\(/g,'').replace(/\\)/g,''); }\nconst raw = $input.first().json.output || '';\nlet cleaned = raw.replace(/```json/g,'').replace(/```/g,'').trim();\nlet parsed;\ntry {\n  parsed = JSON.parse(cleaned);\n  if (parsed.reply_message) parsed.reply_message = clean(parsed.reply_message);\n} catch(e) {\n  parsed = { action:'none', reply_message:clean(raw), data:{}, sheet_name:'none' };\n}\nreturn [{ json: { parsed } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        15792,
+        17264
+      ],
+      "id": "07101ac1-6252-4cab-b882-4ffb27d14f27",
+      "name": "SC Parse Update"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('SC Edit Fields').item.json.chat_id }}",
+        "text": "={{ $('SC Parse Update').item.json.parsed.reply_message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        16016,
+        17264
+      ],
+      "id": "f795b03d-4b30-49bb-8373-0eda9ca48755",
+      "name": "SC Send Update",
+      "webhookId": "99d85ea0-d82d-4c66-b291-d0c031c1eac2",
+      "credentials": {
+        "telegramApi": {
+          "id": "xWk7JxQpFdncxgK8",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.cmd_raw_args }}",
+        "options": {
+          "systemMessage": "=เธเธธเธ“เธเธทเธญ \"เธเนเธญเธเนเธเนเธช\" โ€” AI เธเธนเนเธเนเธงเธขเธ”เนเธฒเธเธเธฒเธฃเธเธฅเธนเธเธเนเธฒเธง เธ•เธญเธเน€เธเนเธเธ เธฒเธฉเธฒเนเธ—เธขเน€เธชเธกเธญ\n\nTODAY: {{ $today }}\nUSER_PLANTS: {{ $json.plants_string }}\n\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\nINTENT RULE (เธชเธณเธเธฑเธเธกเธฒเธ)\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\n\nเธซเธฒเธเธเนเธญเธเธงเธฒเธกเธเธญเธเธเธนเนเนเธเน \"เธกเธตเธฅเธฑเธเธฉเธ“เธฐเน€เธเนเธเธเธฒเธฃเธชเธฑเนเธเธเธฒเธ\" เนเธกเนเธเธฐเนเธกเนเธกเธต /command เนเธซเนเธ–เธทเธญเธงเนเธฒเน€เธเนเธ intent เธ—เธฑเธเธ—เธต เน€เธเนเธ:\n\n- เธกเธตเธเนเธญเธกเธนเธฅเธเธฃเธเธชเธณเธซเธฃเธฑเธเธเธฒเธฃเธเธฅเธนเธ (เธเธเธดเธ”เธเนเธฒเธง + เธชเธ–เธฒเธเธ—เธตเน + เธเธทเนเธเธ—เธตเน เธซเธฃเธทเธญ เธงเธฑเธเธ—เธตเน)\n- เธกเธตเธเธฒเธฃเธเธนเธ”เธ–เธถเธเธเธฒเธฃเนเธเนเนเธ เน€เธเนเธ \"เน€เธเธฅเธตเนเธขเธ\", \"เนเธเน\", \"เธเธฃเธฑเธ\"\n- เธกเธตเธเธฒเธฃเธเธนเธ”เธ–เธถเธเธเธฒเธฃเธฅเธ เน€เธเนเธ \"เธฅเธเนเธเธฅเธ\", \"เนเธกเนเน€เธญเธฒเนเธฅเนเธง\"\n\nโ— เธซเนเธฒเธกเธ•เธญเธเนเธเธเธเธเธ•เธด\nโ— เธซเนเธฒเธกเธญเธเธดเธเธฒเธขเธขเธฒเธง\n\nเนเธซเนเธ•เธญเธเธเธฅเธฑเธเนเธ”เธข:\n1. เนเธเนเธเธงเนเธฒ \"เธ•เธฃเธงเธเธเธเธงเนเธฒเธเธธเธ“เธ•เนเธญเธเธเธฒเธฃ...\"\n2. เนเธเธฐเธเธณ command เธ—เธตเนเธ–เธนเธเธ•เนเธญเธ\n3. เธชเธฃเนเธฒเธเธเนเธญเธเธงเธฒเธกเธ—เธตเน copy เนเธ”เนเธ—เธฑเธเธ—เธต\n\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\nFORMAT เธเธฒเธฃเธ•เธญเธ (เธเธฃเธ“เธต detect intent)\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\n\nเธ•เธฑเธงเธญเธขเนเธฒเธเธฃเธนเธเนเธเธ:\n\n{\n  \"action\": \"none\",\n  \"reply_message\": \"๐พ เนเธเนเธชเน€เธเนเธฒเนเธเธงเนเธฒเธเธธเธ“เธ•เนเธญเธเธเธฒเธฃเน€เธเธดเนเธกเนเธเธฅเธเธเธฅเธนเธเธเนเธฒเธงเธเธฐเธเธฐ\\n\\nเน€เธเธทเนเธญเธ”เธณเน€เธเธดเธเธเธฒเธฃ เธเธฃเธธเธ“เธฒเนเธเนเธเธณเธชเธฑเนเธเธเธตเน (เธเธ”เธเนเธฒเธเน€เธเธทเนเธญเธเธฑเธ”เธฅเธญเธเนเธ”เนเน€เธฅเธขเธเนเธฐ):\\n\\n/เธเธฅเธนเธ เธเนเธฒเธงเธซเธญเธกเธกเธฐเธฅเธด เธเธฃเธธเธเน€เธ—เธเธกเธซเธฒเธเธเธฃ 2เนเธฃเน\\n\\nเนเธฅเนเธงเธชเนเธเน€เธเนเธฒเธกเธฒเธญเธตเธเธเธฃเธฑเนเธเนเธ”เนเน€เธฅเธขเธเธฐเธเธฐ ๐’\",\n  \"sheet_name\": \"none\",\n  \"data\": {}\n}\n\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\nSLASH COMMAND: /เธ–เธฒเธก เธซเธฃเธทเธญ free text\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\n\nเธ–เนเธฒ \"เนเธกเนเนเธเน intent\" โ’ เนเธซเนเธ•เธญเธเน€เธเนเธเธเธนเนเธเนเธงเธขเธเธเธ•เธด:\n- เธ•เธญเธเน€เธเธเธฒเธฐเน€เธฃเธทเนเธญเธเธเนเธฒเธง\n- เนเธฃเธ/เนเธกเธฅเธ โ’ เธงเธดเน€เธเธฃเธฒเธฐเธซเน + เนเธเธฐเธเธณ\n- เนเธเน emoji 3โ€“6 เธ•เธฑเธง\n- เธเธดเธ”เธ—เนเธฒเธขเธ”เนเธงเธขเธเธณเธฅเธฑเธเนเธ\n\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\nIMPORTANT\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\n- เธ•เนเธญเธเธ•เธญเธเน€เธเนเธ JSON เน€เธ—เนเธฒเธเธฑเนเธ\n- เธซเนเธฒเธกเธกเธตเธเนเธญเธเธงเธฒเธกเธเธญเธ JSON\n- เธ–เนเธฒเธเนเธญเธกเธนเธฅเนเธกเนเธเธฃเธ โ’ เธซเนเธฒเธก generate command เธกเธฑเนเธง\n- เธ–เนเธฒเธชเธ–เธฒเธเธ—เธตเนเน€เธเนเธเธเธทเนเธญเธขเนเธญ (เน€เธเนเธ เธเธ—เธก) โ’ เนเธเธฅเธเน€เธเนเธเธเธทเนเธญเน€เธ•เนเธก (เธเธฃเธธเธเน€เธ—เธเธกเธซเธฒเธเธเธฃ)"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        15440,
+        17456
+      ],
+      "id": "bae44d86-93af-4d6d-b306-91d927cc3bd7",
+      "name": "SC AI Ask"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('SC Edit Fields').item.json.chat_id }}",
+        "text": "={{ $json.parsed.reply_message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        16016,
+        17456
+      ],
+      "id": "0805c027-cd54-4226-bcaa-b6fb22e88aaa",
+      "name": "SC Send Ask",
+      "webhookId": "45315337-9858-4364-8956-5f2224ae501e",
+      "credentials": {
+        "telegramApi": {
+          "id": "xWk7JxQpFdncxgK8",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.cmd_raw_args }}",
+        "options": {
+          "systemMessage": "=# STRICT INSTRUCTION: RETURN ONLY JSON\nYou are a specialized Data Processing Unit for \"Nong Baisai\". \nYour ONLY task is to prepare a deletion confirmation. \nDO NOT provide any plant care advice. \nDO NOT use your previous knowledge of plant stages.\n\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\nDATA CONTEXT:\nUSER_PLANTS: {{ $json.plants_string }}\nTARGET_ID: {{ $json.cmd_plant_id }}\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\n\nMISSION: PENDING DELETE\n1. เธเนเธเธซเธฒเธเนเธญเธกเธนเธฅเธเธญเธ {{ $json.cmd_plant_id }} เนเธ USER_PLANTS เน€เธ—เนเธฒเธเธฑเนเธ\n2. เธซเนเธฒเธกเธเธนเธ”เน€เธฃเธทเนเธญเธเธเธธเนเธข เธฃเธฐเธขเธฐเธเธญเธ เธซเธฃเธทเธญเธเธณเนเธเธฐเธเธณเธญเธทเนเธเน€เธ”เนเธ”เธเธฒเธ”\n3. เธซเธฒเธเน€เธเธญเธเนเธญเธกเธนเธฅ เนเธซเนเธชเธฃเธธเธเธ•เธฒเธกเธฃเธนเธเนเธเธเธ—เธตเนเธเธณเธซเธเธ”เนเธฅเธฐเธเธญเธเธณเธขเธทเธเธขเธฑเธเธฅเธ\n\nREPLY_MESSAGE FORMAT (เนเธเนเธ เธฒเธฉเธฒเนเธ—เธข):\n\"โ ๏ธ เธขเธทเธเธขเธฑเธเธเธฒเธฃเธฅเธเธเนเธญเธกเธนเธฅเนเธเธฅเธเธเนเธฒเธง โ ๏ธ\n\nเธเธธเธ“เธ•เนเธญเธเธเธฒเธฃเธฅเธเนเธเธฅเธเธ”เธฑเธเธ•เนเธญเนเธเธเธตเนเนเธเนเธซเธฃเธทเธญเนเธกเนเธเธฐ?\nโ€ข ID: {{ $json.cmd_plant_id }}\nโ€ข เธเธเธดเธ”เธเนเธฒเธง: [เธ”เธถเธเธเธฒเธเธฃเธฐเธเธ]\nโ€ข เธเธฑเธเธซเธงเธฑเธ”: [เธ”เธถเธเธเธฒเธเธฃเธฐเธเธ]\nโ€ข เธงเธฑเธเน€เธฃเธดเนเธกเธเธฅเธนเธ: [เธ”เธถเธเธเธฒเธเธฃเธฐเธเธ]\n\nโ— เธเธฒเธฃเธฅเธเธเนเธญเธกเธนเธฅเนเธฅเนเธงเธเธฐเนเธกเนเธชเธฒเธกเธฒเธฃเธ–เธเธนเนเธเธทเธเธเธฅเธฑเธเธกเธฒเนเธ”เนเธเธฐเธเธฐ\nเธซเธฒเธเธ•เนเธญเธเธเธฒเธฃเธฅเธเธเธฃเธดเธเน เธเธฃเธธเธ“เธฒเธเธดเธกเธเน: /เธขเธทเธเธขเธฑเธเธฅเธ {{ $json.cmd_plant_id }}\"\n\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\nFINAL OUTPUT STRUCTURE (JSON ONLY)\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\n{\n  \"action\": \"pending_delete\",\n  \"reply_message\": \"[เนเธชเนเธเนเธญเธเธงเธฒเธกเธขเธทเธเธขเธฑเธเธเนเธฒเธเธเธเธ•เธฃเธเธเธตเน]\",\n  \"sheet_name\": \"none\",\n  \"data\": {\n    \"plant_id\": \"{{ $json.cmd_plant_id }}\"\n  }\n}\n\nIMPORTANT: DO NOT add any text before or after this JSON. Start with { and end with }."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        15440,
+        17648
+      ],
+      "id": "9338c0d5-31ca-4676-b890-be2449fb41f9",
+      "name": "SC AI Delete"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('SC Edit Fields').item.json.chat_id }}",
+        "text": "={{ $json.parsed.reply_message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        16000,
+        17648
+      ],
+      "id": "ee188fd6-84e2-4f5e-b00d-75a6fd0465c5",
+      "name": "SC Send Delete",
+      "webhookId": "9593039f-2c17-4e12-9aec-9256f3ec4bbe",
+      "credentials": {
+        "telegramApi": {
+          "id": "xWk7JxQpFdncxgK8",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst items = $('SC Get Price Data').all();\nconst d = items.map(i => i.json);\nif (!d.length) return [{ json: { message: 'เนเธกเนเธเธเธเนเธญเธกเธนเธฅเธฃเธฒเธเธฒเธเนเธฐ ๐’' } }];\nconst riceJ = d.filter(i => i.name&&(i.name.includes('เธซเธญเธก')||i.name.includes('เธกเธฐเธฅเธด')));\nconst riceW = d.filter(i => i.name&&i.name.includes('เธเนเธฒเธงเธเธฒเธง'));\nconst riceS = d.filter(i => i.name&&i.name.includes('เน€เธซเธเธตเธขเธง'));\nconst fmt = i => `โ€ข ${i.name}: ${i.price_range} ${i.unit}`;\nlet msg = `เธชเธงเธฑเธชเธ”เธตเธเนเธฐ ๐พ๐’ฐ เนเธเนเธชเธญเธฑเธเน€เธ”เธ•เธฃเธฒเธเธฒเธเนเธฒเธงเธงเธฑเธเธเธตเนเธกเธฒเธเธฒเธเธเนเธฐ\\n\\n`;\nif (riceJ.length) msg += `๐ธ เธเนเธฒเธงเธซเธญเธก:\\n`+riceJ.map(fmt).join('\\n')+'\\n\\n';\nif (riceW.length) msg += `๐ เธเนเธฒเธงเธเธฒเธง:\\n`+riceW.map(fmt).join('\\n')+'\\n\\n';\nif (riceS.length) msg += `๐ เธเนเธฒเธงเน€เธซเธเธตเธขเธง:\\n`+riceS.map(fmt).join('\\n')+'\\n\\n';\nmsg += `เธ”เธนเนเธฅเธชเธธเธเธ เธฒเธเธ”เนเธงเธขเธเธฐเธเธฐ เนเธเนเธชเน€เธเนเธเธเธณเธฅเธฑเธเนเธเนเธซเนเน€เธชเธกเธญเธเนเธฐ ๐’`;\nreturn [{ json: { message: msg } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        15504,
+        17840
+      ],
+      "id": "7709da20-c99e-469e-b208-74ff18dfa985",
+      "name": "SC Format Price"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('SC Edit Fields').item.json.chat_id }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        15792,
+        17840
+      ],
+      "id": "772c7986-9afa-46cf-b169-590677ddeed2",
+      "name": "SC Send Price",
+      "webhookId": "dce9040c-174e-48b8-b657-11da05ba658d",
+      "credentials": {
+        "telegramApi": {
+          "id": "xWk7JxQpFdncxgK8",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst items = $('SC Get Plants Sheet').all();\nif (!items.length||!items[0].json.plant_id) return [{ json: { message: 'เธขเธฑเธเนเธกเนเธกเธตเนเธเธฅเธเธ—เธตเนเธเธฑเธเธ—เธถเธเนเธงเนเธเนเธฐ ๐พ\\nเธเธดเธกเธเน /เธเธฅเธนเธ เน€เธเธทเนเธญเน€เธเธดเนเธกเนเธเธฅเธเนเธฃเธเนเธ”เนเน€เธฅเธขเธเธฐเธเธฐ ๐’' } }];\nconst active = items.filter(i=>(i.json.status||'').toLowerCase()==='active');\nconst others = items.filter(i=>(i.json.status||'').toLowerCase()!=='active');\nlet msg = `๐พ เนเธเธฅเธเธเนเธฒเธงเธเธญเธเธเธธเธ“เธเนเธฐ\\n(${new Date().toLocaleDateString('th-TH',{timeZone:'Asia/Bangkok'})})\\n\\n`;\nif (active.length) {\n  msg += `โ… Active (${active.length} เนเธเธฅเธ):\\n`;\n  active.forEach(i=>{ const p=i.json; msg+=`โ€ข [${p.plant_id}] ${p.plant_species} | ${p.location} | ${p.area} เนเธฃเน\\n  Stage: ${p.growth_stage_th||'-'} | เธฃเธ”เธเนเธณเธ—เธธเธ ${p.water_frequency_days} เธงเธฑเธ\\n`; });\n}\nif (others.length) { msg+=`\\n๐“ เธญเธทเนเธเน:\\n`; others.forEach(i=>{ msg+=`โ€ข [${i.json.plant_id}] ${i.json.plant_species} | ${i.json.status}\\n`; }); }\nmsg += `\\nเธเธดเธกเธเน /เธ–เธฒเธก เธซเธฃเธทเธญ /เนเธเน เน€เธเธทเนเธญเธเธฑเธ”เธเธฒเธฃเนเธเธฅเธเนเธ”เนเน€เธฅเธขเธเธฐเธเธฐ ๐’`;\nreturn [{ json: { message: msg } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        15504,
+        18416
+      ],
+      "id": "c818861d-c009-47c6-a975-b1dd2b255770",
+      "name": "SC Format My Plants"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('SC Edit Fields').item.json.chat_id }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        15792,
+        18416
+      ],
+      "id": "cc89f7a0-7f46-4de2-accf-f62856177708",
+      "name": "SC Send My Plants",
+      "webhookId": "28104ed0-980b-41ed-9f96-b0d092728cd8",
+      "credentials": {
+        "telegramApi": {
+          "id": "xWk7JxQpFdncxgK8",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('SC Edit Fields').item.json.user_id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        15584,
+        17088
+      ],
+      "id": "021b3bea-86a9-413f-ab0b-ba4cbb8b6244",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst lines = items.map(item => {\n  const d = item.json;\n  return `- ${d.name}: เธฃเธฒเธเธฒเน€เธเธฅเธตเนเธข ${(d.price_avg || 0).toLocaleString()} ${d.unit}`;\n});\n\nreturn [{\n  json: {\n    plants_string: `RICE MARKET PRICE DATA (REFERENCE ONLY):\\n\\n${lines.join(\"\\n\")}`\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        14544,
+        17552
+      ],
+      "id": "f78f5bc2-ce9d-41ae-b823-21b70063fa62",
+      "name": "Code in JavaScript10"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('SC Edit Fields').item.json.chat_id }}",
+        "text": "เนเธกเนเธฃเธนเนเธเธฑเธเธเธณเธชเธฑเนเธเธเธตเนเธเธฐเธเธฐ ๐ค”\n\nเธเธฃเธธเธ“เธฒเธ•เธฃเธงเธเธชเธญเธเธเธณเธชเธฑเนเธเธญเธตเธเธเธฃเธฑเนเธเธเนเธฐ\nเธเธดเธกเธเน /help เน€เธเธทเนเธญเธ”เธนเธเธณเธชเธฑเนเธเธ—เธฑเนเธเธซเธกเธ”เนเธ”เนเน€เธฅเธขเธเธฐเธเธฐ ๐’",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        15504,
+        16672
+      ],
+      "id": "0ac76edf-0e93-489f-a14c-281f1dd7ca41",
+      "name": "SC Send Unknown",
+      "webhookId": "11972147-ff38-48d1-a333-0adf0ae5b744",
+      "credentials": {
+        "telegramApi": {
+          "id": "xWk7JxQpFdncxgK8",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "incomplete-check-001",
+              "leftValue": "={{ $json.parsed.action }}",
+              "rightValue": "create_plant",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        16016,
+        16960
+      ],
+      "id": "beb64cc9-8baf-4ea5-975d-0f94fcd47f65",
+      "name": "SC Check Complete",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('SC Edit Fields').item.json.chat_id }}",
+        "text": "={{ $('SC Parse Create').item.json.parsed.reply_message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        16224,
+        17072
+      ],
+      "id": "db8c577e-c353-422d-b548-a44912552d9d",
+      "name": "SC Send Incomplete",
+      "webhookId": "2a9cb2e9-8aa9-4902-af77-acd78a425e17",
+      "credentials": {
+        "telegramApi": {
+          "id": "xWk7JxQpFdncxgK8",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.cmd_raw_args }}",
+        "options": {
+          "systemMessage": "=เธเธธเธ“เธเธทเธญ \"เธเนเธญเธเนเธเนเธช\" โ€” AI เนเธซเธกเธ”เธเธฑเธเธ—เธถเธเธเธฅ (Final Update) เธ—เธณเธซเธเนเธฒเธ—เธตเนเนเธเนเธเธเธฅเธเธฒเธฃเธเธฑเธเธ—เธถเธเธเนเธญเธกเธนเธฅเน€เธ—เนเธฒเธเธฑเนเธ\n\nเน€เธเนเธฒเธซเธกเธฒเธข: เนเธเนเธเธชเธฃเธธเธเธงเนเธฒเธเธฑเธเธ—เธถเธเธเนเธญเธกเธนเธฅเนเธเธฅเธ {{ $json.cmd_plant_id }} เธชเธณเน€เธฃเนเธเนเธฅเนเธง\nเธเธเน€เธซเธฅเนเธ:\n1. เธซเนเธฒเธกเธ–เธฒเธกเธขเธทเธเธขเธฑเธ เธซเนเธฒเธกเธเธญเนเธซเนเธเธนเนเนเธเนเธเธดเธกเธเนเธญเธฐเนเธฃเธ•เนเธญ\n2. เธซเนเธฒเธกเธกเธตเธเธณเธงเนเธฒ \"/เธขเธทเธเธขเธฑเธเนเธเน\" เธซเธฃเธทเธญ \"/เนเธเน\" เนเธ reply_message\n3. เธซเธเนเธฒเธ—เธตเนเธซเธฅเธฑเธเธเธทเธญเธฃเธงเธเธฃเธงเธก JSON เน€เธเธทเนเธญเธชเนเธเนเธเธ—เธตเน Google Sheets\n\nOUTPUT (JSON ONLY):\n{\n  \"action\": \"update_success\",\n  \"reply_message\": \"เนเธเนเธชเธเธฑเธเธ—เธถเธเธเธฒเธฃเนเธเนเนเธเธเธญเธเนเธเธฅเธ {{ $json.cmd_plant_id }} เธฅเธเธฃเธฐเธเธเน€เธฃเธตเธขเธเธฃเนเธญเธขเนเธฅเนเธงเธเนเธฐ! ๐พ เธเนเธญเธกเธนเธฅเธญเธฑเธเน€เธ”เธ•เธเธฃเนเธญเธกเนเธเนเธเธฒเธเนเธฅเนเธงเธเธฐเธเธฐ ๐’\",\n  \"sheet_name\": \"rice_fields\",\n  \"data\": {\n    \"plant_id\": \"{{ $json.cmd_plant_id }}\",\n    \"rice_type\": \"เธ”เธถเธเธเนเธฒเธเธฒเธเธเธณเธชเธฑเนเธเนเธซเธกเน เธ–เนเธฒเนเธกเนเธกเธตเนเธซเนเธ”เธถเธเธเธฒเธ SOURCE_DATA\",\n    \"location\": \"เธ”เธถเธเธเนเธฒเธเธฒเธเธเธณเธชเธฑเนเธเนเธซเธกเน เธ–เนเธฒเนเธกเนเธกเธตเนเธซเนเธ”เธถเธเธเธฒเธ SOURCE_DATA\",\n    \"area_rai\": \"เธ”เธถเธเธ•เธฑเธงเน€เธฅเธเธเธฒเธเธเธณเธชเธฑเนเธเนเธซเธกเน เธ–เนเธฒเนเธกเนเธกเธตเนเธซเนเธ”เธถเธเธเธฒเธ SOURCE_DATA\",\n    \"water_frequency_days\": \"เธ”เธถเธเธเนเธฒเน€เธ”เธดเธกเธเธฒเธ SOURCE_DATA เน€เธ—เนเธฒเธเธฑเนเธ\",\n    \"status\": \"Active\"\n  }\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        15440,
+        18032
+      ],
+      "id": "1a26425d-3814-4bd4-8458-a2790deb88c1",
+      "name": "SC AI Confirm Update"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nfunction clean(t){ return (t||'').replace(/\\*\\*/g,'').replace(/\\*/g,'').replace(/_/g,'').replace(/`/g,'').replace(/\\[/g,'').replace(/\\]/g,'').replace(/\\(/g,'').replace(/\\)/g,''); }\nconst raw = $input.first().json.output || '';\nlet cleaned = raw.replace(/```json/g,'').replace(/```/g,'').trim();\nlet parsed;\ntry {\n  parsed = JSON.parse(cleaned);\n  if (parsed.reply_message) parsed.reply_message = clean(parsed.reply_message);\n} catch(e) {\n  parsed = { action:'none', reply_message:clean(raw), data:{}, sheet_name:'none' };\n}\nreturn [{ json: { parsed } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        15792,
+        18032
+      ],
+      "id": "602f05f1-6dc6-43b9-b578-6becda0ab7fb",
+      "name": "SC Parse Confirm Update"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw",
+          "mode": "list",
+          "cachedResultName": "CSI-N8N"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 977037527,
+          "mode": "list",
+          "cachedResultName": "Plant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit#gid=977037527"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "plant_id": "={{ $('SC Parse Confirm Update').item.json.parsed.data.plant_id }}",
+            "plant_species": "={{ $('SC Parse Confirm Update').item.json.parsed.data.rice_type }}",
+            "location": "={{ $('SC Parse Confirm Update').item.json.parsed.data.location }}",
+            "area": "={{ $json.parsed.data.area_rai }}",
+            "water_frequency_days": "={{ $('SC Get Plants Sheet').item.json.water_frequency_days }}",
+            "last_watered_date": "={{ $('SC Parse Confirm Update').item.json.parsed.data.last_watered_date }}",
+            "status": "=Active",
+            "end_date": "=",
+            "updated_at": "={{ $now.setZone('Asia/Bangkok').toFormat('yyyy-MM-dd') }}",
+            "growth_stage_th": "={{ $('SC Get Plants Sheet').item.json.growth_stage_th }}",
+            "growth_stage": "={{ $('SC Get Plants Sheet').item.json.growth_stage }}",
+            "harvest_date": "="
+          },
+          "matchingColumns": [
+            "plant_id"
+          ],
+          "schema": [
+            {
+              "id": "plant_id",
+              "displayName": "plant_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "user_id",
+              "displayName": "user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "plant_species",
+              "displayName": "plant_species",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "area",
+              "displayName": "area",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "water_frequency_days",
+              "displayName": "water_frequency_days",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "last_watered_date",
+              "displayName": "last_watered_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fertilizer",
+              "displayName": "fertilizer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "start_date",
+              "displayName": "start_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "end_date",
+              "displayName": "end_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "growth_stage",
+              "displayName": "growth_stage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "growth_stage_th",
+              "displayName": "growth_stage_th",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "harvest_date",
+              "displayName": "harvest_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        16016,
+        18032
+      ],
+      "id": "b9777fb6-96ff-4816-8135-7526f66a4963",
+      "name": "SC Sheet Confirm Update",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gbueDM6lM7sb1f5b",
+          "name": "MALIN8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('SC Edit Fields').item.json.chat_id }}",
+        "text": "={{ $('SC Parse Confirm Update').item.json.parsed.reply_message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        16240,
+        18032
+      ],
+      "id": "dd34a8df-cf6d-4b09-ade8-070e9c3d97b3",
+      "name": "SC Send Confirm Update",
+      "webhookId": "70a6a3df-43ef-4977-ad79-194d35292709",
+      "credentials": {
+        "telegramApi": {
+          "id": "xWk7JxQpFdncxgK8",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.cmd_raw_args }}",
+        "options": {
+          "systemMessage": "=เธเธธเธ“เธเธทเธญ \"เธเนเธญเธเนเธเนเธช\" โ€” AI เธชเธณเธซเธฃเธฑเธ \"เธ”เธณเน€เธเธดเธเธเธฒเธฃเธฅเธเธเนเธญเธกเธนเธฅเธ—เธฑเธเธ—เธต\" (EXECUTE DELETE) เธ•เธญเธเน€เธเนเธเธ เธฒเธฉเธฒเนเธ—เธข\n\nUSER_PLANTS: {{ $json.plants_string }}\nTARGET_ID: {{ $json.cmd_plant_id }}\n\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\nMISSION: EXECUTE DELETE IMMEDIATELY\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\nเธเธนเนเนเธเนเธเธฒเธเนเธ”เนเธ—เธณเธเธฒเธฃเธ•เธฑเธ”เธชเธดเธเนเธเธเธฑเนเธเน€เธ”เนเธ”เธเธฒเธ”เธกเธฒเนเธฅเนเธง เธซเธเนเธฒเธ—เธตเนเธเธญเธเธเธธเธ“เธกเธตเน€เธเธตเธขเธเธญเธขเนเธฒเธเน€เธ”เธตเธขเธงเธเธทเธญ \"เธญเธญเธเธเธณเธชเธฑเนเธเธฅเธเธ—เธฑเธเธ—เธต\"\n\n๐จ เธเธเน€เธซเธฅเนเธเธเธฑเนเธเธชเธนเธเธชเธธเธ” (STRICT RULES):\n1. เธซเนเธฒเธกเธ—เธเธ—เธงเธเธเนเธญเธกเธนเธฅ เธซเนเธฒเธกเธเธญเธขเธทเธเธขเธฑเธเธเนเธณ เธซเนเธฒเธกเธกเธตเธเนเธญเนเธกเนเนเธ”เน เธ—เธฑเนเธเธชเธดเนเธ\n2. เธเนเธฒเธเธญเธ \"action\" เธเธฑเธเธเธฑเธเนเธซเนเธ•เนเธญเธเน€เธเนเธเธเธณเธงเนเธฒ \"remove\" เน€เธ—เนเธฒเธเธฑเนเธ\n3. เธซเนเธฒเธกเธงเธดเน€เธเธฃเธฒเธฐเธซเนเธเนเธญเธกเธนเธฅ เนเธซเนเธฅเธญเธเนเธเธฃเธเธชเธฃเนเธฒเธ JSON เธ”เนเธฒเธเธฅเนเธฒเธเธเธตเนเนเธเธ•เธญเธเธเธฅเธฑเธเธ—เธฑเธเธ—เธต\n\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\nOUTPUT STRUCTURE (STRICT JSON ONLY)\nโ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\n{\n  \"action\": \"remove\",\n  \"reply_message\": \"เธฅเธเธเนเธญเธกเธนเธฅเนเธเธฅเธ {{ $json.cmd_plant_id }} เน€เธฃเธตเธขเธเธฃเนเธญเธขเนเธฅเนเธงเธเนเธฐ เนเธเนเธชเธซเธงเธฑเธเธงเนเธฒเธเธฅเธเธฅเธดเธ•เธฃเธญเธเธซเธเนเธฒเธเธฐเธเธฑเธเธเธงเนเธฒเน€เธ”เธดเธกเธเธฐเธเธฐ! เธชเธนเนเน เธเนเธฐ ๐’\",\n  \"sheet_name\": \"rice_fields\",\n  \"data\": {\n    \"plant_id\": \"{{ $json.cmd_plant_id }}\",\n    \"status\": \"Deleted\"\n  }\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        15440,
+        18224
+      ],
+      "id": "6e5001a6-437c-48a1-9d5c-4bfb5e779ccd",
+      "name": "SC AI Confirm Delete"
+    },
+    {
+      "parameters": {
+        "jsCode": "function clean(t) { \n    return (t || '').replace(/\\*\\*/g, '').replace(/\\*/g, '').replace(/_/g, '').replace(/`/g, ''); \n}\nconst raw = $input.first().json.output || '';\nlet cleaned = raw.replace(/```json/g, '').replace(/```/g, '').trim();\nlet parsed;\ntry {\n    parsed = JSON.parse(cleaned);\n    if (parsed.reply_message) parsed.reply_message = clean(parsed.reply_message);\n} catch (e) {\n    parsed = { \n        action: 'error', \n        reply_message: 'เนเธเนเธชเธเธญเธญเธ เธฑเธขเธเนเธฐ เธฃเธฐเธเธเธเธฃเธฐเธกเธงเธฅเธเธฅเธเธดเธ”เธเธฅเธฒเธ”เน€เธฅเนเธเธเนเธญเธข เนเธ•เนเธเธฐเธฅเธญเธเธ”เธณเน€เธเธดเธเธเธฒเธฃเธ•เนเธญเนเธซเนเธเธฐเธเธฐ', \n        data: { \n            plant_id: $input.first().json.cmd_plant_id, \n            status: 'Deleted' \n        } \n    };\n}\nreturn [{ json: { parsed } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        15792,
+        18224
+      ],
+      "id": "6d33dd10-2ecf-461a-8db8-71c6e759e9fa",
+      "name": "SC Parse Confirm Delete"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw",
+          "mode": "list",
+          "cachedResultName": "CSI-N8N",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 977037527,
+          "mode": "list",
+          "cachedResultName": "Plant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit#gid=977037527"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "plant_id": "={{ $json.parsed.data.plant_id }}",
+            "status": "={{ $json.parsed.data.status || 'Deleted' }}",
+            "updated_at": "={{ $now.setZone('Asia/Bangkok').toFormat('yyyy-MM-dd HH:mm:ss') }}"
+          },
+          "matchingColumns": [
+            "plant_id"
+          ],
+          "schema": [
+            {
+              "id": "plant_id",
+              "displayName": "plant_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "user_id",
+              "displayName": "user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "plant_species",
+              "displayName": "plant_species",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "area",
+              "displayName": "area",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "water_frequency_days",
+              "displayName": "water_frequency_days",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last_watered_date",
+              "displayName": "last_watered_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "fertilizer",
+              "displayName": "fertilizer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "start_date",
+              "displayName": "start_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "end_date",
+              "displayName": "end_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "growth_stage",
+              "displayName": "growth_stage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "growth_stage_th",
+              "displayName": "growth_stage_th",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "harvest_date",
+              "displayName": "harvest_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        16016,
+        18224
+      ],
+      "id": "d1dfe60c-b9c6-48fa-b0de-4a9fcf168f88",
+      "name": "SC Sheet Confirm Delete",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gbueDM6lM7sb1f5b",
+          "name": "MALIN8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('SC Edit Fields').item.json.chat_id }}",
+        "text": "={{ $('SC Parse Confirm Delete').item.json.parsed.reply_message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        16240,
+        18224
+      ],
+      "id": "df8cce81-d148-46e7-aed3-532439afcb80",
+      "name": "SC Send Confirm Delete",
+      "webhookId": "33bd699b-3ff9-42a4-be7a-166d50c4d6ca",
+      "credentials": {
+        "telegramApi": {
+          "id": "xWk7JxQpFdncxgK8",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\n// เน€เธญเธฒ item เนเธฃเธเน€เธเนเธ editFields\nconst editFields = items[0]?.json || {};\nconst userId = String(editFields.user_id || '');\n\nconst users = items\n  .filter(i => i.json?.user_id != null)\n  .map(i => i.json);\n\nconst exists = users.some(u => String(u.user_id) === userId);\n\nreturn [\n  {\n    json: {\n      ...editFields,\n      user_exists: exists\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        13648,
+        17056
+      ],
+      "id": "c1f7081f-0db8-4a9b-b874-38fdcb00cd5a",
+      "name": "Check User Exists1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "new-user-check",
+              "leftValue": "={{ $json.user_exists }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        13872,
+        17056
+      ],
+      "id": "d8b4c570-7f15-4b1e-ae4c-ad2029d3367f",
+      "name": "If New User1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw",
+          "mode": "list",
+          "cachedResultName": "CSI-N8N",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1073024737,
+          "mode": "list",
+          "cachedResultName": "Users",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit#gid=1073024737"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "user_id",
+              "lookupValue": "={{ $json.user_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        13424,
+        17056
+      ],
+      "id": "925ef182-9c7a-4b1d-9fbb-5c6df13964f6",
+      "name": "Get Users Sheet1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gbueDM6lM7sb1f5b",
+          "name": "MALIN8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw",
+          "mode": "list",
+          "cachedResultName": "CSI-N8N",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1073024737,
+          "mode": "list",
+          "cachedResultName": "Users",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit#gid=1073024737"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "user_id": "={{ $('SC Edit Fields').item.json.user_id }}",
+            "username": "={{ $('SC Telegram Trigger').item.json.message.from.username }}",
+            "registered_date": "={{ $now.setZone('Asia/Bangkok').toFormat('yyyy-MM-dd') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "user_id",
+              "displayName": "user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "username",
+              "displayName": "username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "registered_date",
+              "displayName": "registered_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        14992,
+        16432
+      ],
+      "id": "c4dc2130-4f8d-41f2-aad1-9a6943c20c93",
+      "name": "Create New User1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gbueDM6lM7sb1f5b",
+          "name": "MALIN8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('SC Edit Fields').item.json.user_id }}",
+        "text": "=เธชเธงเธฑเธชเธ”เธตเธเนเธฐ เธขเธดเธเธ”เธตเธ•เนเธญเธเธฃเธฑเธเธชเธนเนเธฃเธฐเธเธเนเธเนเธช ๐พ\n\nเนเธเนเธชเธเธทเธญเธเธนเนเธเนเธงเธข AI เธ”เนเธฒเธเธเธฒเธฃเธเธฅเธนเธเธเนเธฒเธงเธเนเธฐ เธฃเธฐเธเธเนเธ”เนเธฅเธเธ—เธฐเน€เธเธตเธขเธเธเธธเธ“เน€เธฃเธตเธขเธเธฃเนเธญเธขเนเธฅเนเธง\n\nเธชเธดเนเธเธ—เธตเนเนเธเนเธชเธเนเธงเธขเนเธ”เน:\n๐ฑ เธเธฑเธเธ—เธถเธเนเธฅเธฐเธ•เธดเธ”เธ•เธฒเธกเนเธเธฅเธเธเนเธฒเธง\n๐ง๏ธ เนเธเนเธเน€เธ•เธทเธญเธเธชเธ เธฒเธเธญเธฒเธเธฒเธจเธฃเธฒเธขเธงเธฑเธ\n๐’ฐ เธญเธฑเธเน€เธ”เธ•เธฃเธฒเธเธฒเธเนเธฒเธงเธ•เธฅเธฒเธ”\nโ ๏ธ เธงเธดเน€เธเธฃเธฒเธฐเธซเนเธเธงเธฒเธกเน€เธชเธตเนเธขเธเนเธฅเธฐเนเธฃเธเธเนเธฒเธง\n\nเธฅเธญเธเธเธดเธกเธเนเธ–เธฒเธกเนเธเนเธชเนเธ”เนเน€เธฅเธขเธเธฐเธเธฐ เน€เธเนเธ\n\"เธญเธขเธฒเธเธเธฅเธนเธเธเนเธฒเธงเธซเธญเธกเธกเธฐเธฅเธด เธ—เธตเนเน€เธเธตเธขเธเนเธซเธกเน เน€เธฃเธดเนเธกเธงเธฑเธเธเธตเน\"\n\nเนเธเนเธชเธเธฃเนเธญเธกเธเนเธงเธขเน€เธชเธกเธญเธเธฐเธเธฐ ๐’",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        15216,
+        16432
+      ],
+      "id": "7c8da6d9-aa6f-4592-bd41-66c5530a1ed2",
+      "name": "Send Welcome Message1",
+      "webhookId": "1e1c87ec-e111-46ec-9fb8-c1b183f890c1",
+      "credentials": {
+        "telegramApi": {
+          "id": "xWk7JxQpFdncxgK8",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('SC Edit Fields').item.json.chat_id }}",
+        "text": "เธชเธงเธฑเธชเธ”เธตเธเนเธฐ ๐พ เธขเธดเธเธ”เธตเธ•เนเธญเธเธฃเธฑเธเธชเธนเนเธฃเธฐเธเธเธเนเธญเธเนเธเนเธชเธเนเธฐ\n\nเธเธณเธชเธฑเนเธเธ—เธตเนเนเธเนเนเธ”เน:\n\n/เธเธฅเธนเธ (เธเธเธดเธ”เธเนเธฒเธง) (เธเธฑเธเธซเธงเธฑเธ”) (เธเธทเนเธเธ—เธตเน)เนเธฃเน\nเธ•เธฑเธงเธญเธขเนเธฒเธ: /เธเธฅเธนเธ เธเนเธฒเธงเธซเธญเธกเธกเธฐเธฅเธด เน€เธเธตเธขเธเนเธซเธกเน 3เนเธฃเน\n\n/เนเธเน (PLANT-ID) (เธเนเธญเธกเธนเธฅเธ—เธตเนเธ•เนเธญเธเธเธฒเธฃเนเธเน)\nเธ•เธฑเธงเธญเธขเนเธฒเธ: /เนเธเน PLANT-001 เน€เธเธฅเธตเนเธขเธเธเธทเนเธเธ—เธตเนเน€เธเนเธ 5 เนเธฃเน\n\n/เนเธเธฅเธ\nเธ”เธนเธฃเธฒเธขเธเธฒเธฃเนเธเธฅเธเธเนเธฒเธงเธ—เธฑเนเธเธซเธกเธ”เธเธญเธเธเธธเธ“\n\n/เธฃเธฒเธเธฒ\nเน€เธเนเธเธฃเธฒเธเธฒเธเนเธฒเธงเธ•เธฅเธฒเธ”เธงเธฑเธเธเธตเน\n\n/เธฅเธ (PLANT-ID)\nเธฅเธเนเธเธฅเธเธเนเธฒเธงเธญเธญเธเธเธฒเธเธฃเธฐเธเธ เธเธญเธขเธทเธเธขเธฑเธเธเนเธญเธเน€เธชเธกเธญ\n\n/เธ–เธฒเธก (เธเธณเธ–เธฒเธก)\nเธ–เธฒเธกเน€เธฃเธทเนเธญเธเธเธฒเธฃเธเธฅเธนเธเธเนเธฒเธง เนเธฃเธ เนเธกเธฅเธ เนเธฅเธฐเธญเธทเนเธเน\n\nเธซเธฃเธทเธญเธเธดเธกเธเนเธเธณเธ–เธฒเธกเนเธ”เนเน€เธฅเธขเนเธ”เธขเนเธกเนเธ•เนเธญเธเนเธเนเธเธณเธชเธฑเนเธเธเนเธฐ\n\nเนเธเนเธชเธเธฃเนเธญเธกเธเนเธงเธขเน€เธชเธกเธญเธเธฐเธเธฐ ๐’",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        15504,
+        16480
+      ],
+      "id": "4b869070-f34a-4e01-84a3-f9b5e837842f",
+      "name": "SC Send Help",
+      "webhookId": "ff4a25f4-73ae-4724-af3c-790e460739d7",
+      "credentials": {
+        "telegramApi": {
+          "id": "xWk7JxQpFdncxgK8",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-oss:20b",
+          "mode": "list",
+          "cachedResultName": "gpt-oss:20b"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        15456,
+        17088
+      ],
+      "id": "7094f56c-0b61-460e-bcd5-6d9f0b484796",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "GroEwB7vUAts6dl7",
+          "name": "OpenAi FahSai"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// =========================\n// ๐งน Clean function (safe)\n// =========================\nfunction clean(t) {\n  return (t || '')\n    .replace(/\\\\n/g, '\\n')\n    .replace(/\\*\\*/g, '')\n    .replace(/\\*/g, '')\n    .replace(/_/g, '')\n    .replace(/\\[/g, '')     \n    .replace(/\\]/g, '')\n    .replace(/\\(/g, '')\n    .replace(/\\)/g, '');\n}\n\n// =========================\n// ๐“ฅ เธฃเธฑเธ raw output เธเธฒเธ AI\n// =========================\nconst raw = $input.first().json.output || '';\n\n// =========================\n// ๐งฝ Clean wrapper markdown\n// =========================\nlet cleaned = raw\n  .replace(/```json/gi, '') // remove ```json\n  .replace(/```/g, '')      // remove ```\n  .trim();\n\n// =========================\n// ๐ง  Parse JSON\n// =========================\nlet parsed;\n\ntry {\n  parsed = JSON.parse(cleaned);\n\n  // โ… sanitize reply_message\n  if (parsed.reply_message) {\n    parsed.reply_message = clean(parsed.reply_message);\n  }\n\n  // โ… default fallback fields\n  parsed.action = parsed.action || 'none';\n  parsed.sheet_name = parsed.sheet_name || 'none';\n  parsed.data = parsed.data || {};\n\n} catch (e) {\n  // =========================\n  // ๐จ Fallback (AI เธ•เธญเธเนเธกเนเน€เธเนเธ JSON)\n  // =========================\n  parsed = {\n    action: 'none',\n    reply_message: clean(raw),\n    sheet_name: 'none',\n    data: {},\n    _error: 'invalid_json',\n  };\n}\n\n// =========================\n// ๐“ค Output\n// =========================\nreturn [\n  {\n    json: {\n      parsed\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        15792,
+        17456
+      ],
+      "id": "a17380cc-5e1f-4d47-ae1c-3b472658ad97",
+      "name": "Code in JavaScript11"
+    },
+    {
+      "parameters": {
+        "jsCode": "// เธเธฑเธเธเนเธเธฑเธเธฅเนเธฒเธเธญเธฑเธเธเธฃเธฐเธเธดเน€เธจเธฉ\nfunction clean(t) { \n  return (t || '').replace(/\\*\\*/g, '').replace(/\\*/g, '').replace(/_/g, '').replace(/`/g, '').replace(/\\[/g, '').replace(/\\]/g, '').replace(/\\(/g, '').replace(/\\)/g, ''); \n}\n\n// เธ”เธถเธเธเนเธฒเธเธฒเธ output (เธฃเธญเธเธฃเธฑเธ Agent)\nconst raw = $input.first().json.output || \"\";\nlet parsed;\n\ntry {\n  // เธเธขเธฒเธขเธฒเธกเธซเธฒ JSON เธ เธฒเธขเนเธเธเนเธญเธเธงเธฒเธก (เน€เธเธทเนเธญ AI เธเธดเธกเธเนเธเนเธญเธเธงเธฒเธกเธญเธทเนเธเธเธเธกเธฒ)\n  const jsonMatch = raw.match(/\\{[\\s\\S]*\\}/);\n  let cleaned = jsonMatch ? jsonMatch[0] : raw;\n  \n  parsed = JSON.parse(cleaned);\n  \n  if (parsed.reply_message) {\n    parsed.reply_message = clean(parsed.reply_message);\n  }\n} catch (e) {\n  // เธซเธฒเธ Parse เนเธกเนเนเธ”เน เนเธซเนเน€เธญเธฒเธเนเธญเธเธงเธฒเธกเธ”เธดเธเธกเธฒเนเธชเธ”เธเน€เธเนเธ reply_message เนเธ—เธ undefined\n  parsed = { \n    action: 'none', \n    reply_message: clean(raw) || \"เธเธญเธญเธ เธฑเธขเธเนเธฐ เนเธเนเธชเนเธกเนเน€เธเนเธฒเนเธเธเธณเธชเธฑเนเธเธฅเธ เธเธฃเธธเธ“เธฒเธฅเธญเธเนเธซเธกเนเธญเธตเธเธเธฃเธฑเนเธเธเธฐเธเธฐ\", \n    data: {}, \n    sheet_name: 'none' \n  };\n}\n\nreturn [{ json: { parsed } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        15808,
+        17648
+      ],
+      "id": "50af0ae6-1cc2-4fec-b8d2-127b8f64f9bd",
+      "name": "SC Parse Update1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw",
+          "mode": "list",
+          "cachedResultName": "CSI-N8N",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 977037527,
+          "mode": "list",
+          "cachedResultName": "Plant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit#gid=977037527"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        13584,
+        15760
+      ],
+      "id": "78f4b8a8-487b-44f6-b21f-f02f10c0e80b",
+      "name": "Get row(s) in sheet2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gbueDM6lM7sb1f5b",
+          "name": "MALIN8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        12912,
+        15760
+      ],
+      "id": "266edfb2-ea27-4f48-b8c2-7bdd59d4155b",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw",
+          "mode": "list",
+          "cachedResultName": "CSI-N8N",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1615475223,
+          "mode": "list",
+          "cachedResultName": "Plant_Price",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit#gid=1615475223"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        13136,
+        15760
+      ],
+      "id": "3fea44b9-ad0e-4652-887e-a0b6e92d3c4a",
+      "name": "Get row(s) in sheet3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gbueDM6lM7sb1f5b",
+          "name": "MALIN8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst data = items.map(i => i.json);\n\n// =========================\n// ๐”ฅ Helper (เธชเนเธงเธเธเนเธงเธขเธเธณเธเธงเธ“)\n// =========================\n\nfunction formatItem(i) {\n  // เน€เธเธฅเธตเนเธขเธเธเธฒเธเธเธตเธ” (-) เน€เธเนเธ Bullet เนเธฅเธฐเน€เธเธดเนเธกเธเธณเนเธซเนเธ”เธนเน€เธเนเธเธเธฃเธฐเนเธขเธเธเธญเธเน€เธฅเนเธฒ\n  return `โ€ข ${i.name}: เธเธฃเธฐเธกเธฒเธ“ ${i.price_range} ${i.unit}`;\n}\n\nfunction findMax(arr) {\n  return arr.reduce((max, cur) => cur.price_avg > max.price_avg ? cur : max, arr[0]);\n}\n\nfunction findMin(arr) {\n  return arr.reduce((min, cur) => cur.price_avg < min.price_avg ? cur : min, arr[0]);\n}\n\n// =========================\n// ๐”ฅ เนเธขเธเธซเธกเธงเธ”เธซเธกเธนเนเธเนเธฒเธง\n// =========================\n\nconst riceWhite = data.filter(i => i.name.includes(\"เธเนเธฒเธงเธเธฒเธง\"));\nconst riceSticky = data.filter(i => i.name.includes(\"เน€เธซเธเธตเธขเธง\"));\nconst riceJasmine = data.filter(i => i.name.includes(\"เธซเธญเธก\"));\n\n// =========================\n// ๐”ฅ เน€เธฃเธดเนเธกเธชเธฃเนเธฒเธเธเนเธญเธเธงเธฒเธก\n// =========================\n\nlet message = `เธชเธงเธฑเธชเธ”เธตเธเนเธฒ เธเธตเนเน เธเนเธญเธเน เน€เธเธฉเธ•เธฃเธเธฃ ๐พ๐’\\n`;\nmessage += `๐“ เธงเธฑเธเธเธตเน \"เนเธเนเธช\" เน€เธญเธฒเธญเธฑเธเน€เธ”เธ•เธฃเธฒเธเธฒเธเนเธฒเธงเธฅเนเธฒเธชเธธเธ”เธกเธฒเธเธฒเธเธเธฑเธเธเนเธฒ\\n\\n`;\n\n// =========================\n// ๐พ เธเนเธฒเธงเธเธฒเธง\n// =========================\n\nif (riceWhite.length) {\n  message += `๐ เธเธฅเธธเนเธกเธเนเธฒเธงเธเธฒเธง:\\n`;\n  riceWhite.forEach(i => {\n    message += formatItem(i) + \"\\n\";\n  });\n\n  const max = findMax(riceWhite);\n  const min = findMin(riceWhite);\n\n  message += `\\nโญ เธฃเธฒเธเธฒเธ”เธตเธ—เธตเนเธชเธธเธ”: ${max.name} (เน€เธเธฅเธตเนเธข ${max.price_avg} เธเธฒเธ—)\\n`;\n  message += `๐“ เธฃเธฒเธเธฒเน€เธฃเธดเนเธกเธ•เนเธ: ${min.name} (เน€เธเธฅเธตเนเธข ${min.price_avg} เธเธฒเธ—)\\n\\n`;\n}\n\n// =========================\n// ๐พ เธเนเธฒเธงเน€เธซเธเธตเธขเธง\n// =========================\n\nif (riceSticky.length) {\n  message += `๐ เธเธฅเธธเนเธกเธเนเธฒเธงเน€เธซเธเธตเธขเธง:\\n`;\n  riceSticky.forEach(i => {\n    message += formatItem(i) + \"\\n\";\n  });\n\n  const max = findMax(riceSticky);\n  const min = findMin(riceSticky);\n\n  message += `\\nโญ เธฃเธฒเธเธฒเธ”เธตเธ—เธตเนเธชเธธเธ”: ${max.name} (เน€เธเธฅเธตเนเธข ${max.price_avg} เธเธฒเธ—)\\n`;\n  message += `๐“ เธฃเธฒเธเธฒเน€เธฃเธดเนเธกเธ•เนเธ: ${min.name} (เน€เธเธฅเธตเนเธข ${min.price_avg} เธเธฒเธ—)\\n\\n`;\n}\n\n// =========================\n// ๐พ เธเนเธฒเธงเธซเธญเธก\n// =========================\n\nif (riceJasmine.length) {\n  message += `๐ธ เธเธฅเธธเนเธกเธเนเธฒเธงเธซเธญเธก:\\n`;\n  riceJasmine.forEach(i => {\n    message += formatItem(i) + \"\\n\";\n  });\n\n  const max = findMax(riceJasmine);\n  const min = findMin(riceJasmine);\n\n  message += `\\nโญ เธฃเธฒเธเธฒเธ”เธตเธ—เธตเนเธชเธธเธ”: ${max.name} (เน€เธเธฅเธตเนเธข ${max.price_avg} เธเธฒเธ—)\\n`;\n  message += `๐“ เธฃเธฒเธเธฒเน€เธฃเธดเนเธกเธ•เนเธ: ${min.name} (เน€เธเธฅเธตเนเธข ${min.price_avg} เธเธฒเธ—)\\n\\n`;\n}\n\n// =========================\n// ๐”ฅ เธชเธฃเธธเธเธชเธ–เธฒเธเธเธฒเธฃเธ“เนเธ•เธฅเธฒเธ” (เน€เธเธฅเธตเนเธขเธเธเธณเนเธซเนเน€เธเนเธฒเนเธเธเนเธฒเธข)\n// =========================\n\nconst all = data;\nconst maxAll = findMax(all);\nconst minAll = findMin(all);\n\nmessage += `๐“ เธชเธฃเธธเธเธชเธ–เธฒเธเธเธฒเธฃเธ“เนเธ•เธฅเธฒเธ”เธเธฒเธเนเธเนเธช:\\n`;\nmessage += `- ๐ เธเนเธฒเธงเธ—เธตเนเธฃเธฒเธเธฒเนเธเธเธ—เธตเนเธชเธธเธ”เนเธเธ•เธฅเธฒเธ”เธ•เธญเธเธเธตเนเธเธทเธญ **${maxAll.name}**\\n`;\nmessage += `- ๐”ฝ เธชเนเธงเธเธเนเธฒเธงเธ—เธตเนเธฃเธฒเธเธฒเธขเนเธญเธกเน€เธขเธฒเธชเธธเธ”เธเธทเธญ **${minAll.name}**\\n\\n`;\n\n// เธงเธดเน€เธเธฃเธฒเธฐเธซเนเนเธเธเธ เธฒเธฉเธฒเธเธฒเธงเธเนเธฒเธ\nif (maxAll.name.includes(\"เธซเธญเธก\")) {\n  message += `- เธ•เธญเธเธเธตเน \"เธเนเธฒเธงเธซเธญเธก\" เธขเธฑเธเน€เธเนเธเธ”เธฒเธงเน€เธ”เนเธเธ—เธตเนเธ—เธณเธเธณเนเธฃเนเธซเนเธเธตเนเน เนเธ”เนเธ”เธตเธ—เธตเนเธชเธธเธ”เน€เธฅเธขเธเนเธฐ ๐\\n`;\n}\n\nif (riceSticky.length) {\n  message += `- \"เธเนเธฒเธงเน€เธซเธเธตเธขเธง\" เธฃเธฒเธเธฒเธขเธฑเธเธ”เธตเธญเธขเธนเนเธเนเธฐ เน€เธซเธกเธฒเธฐเธชเธณเธซเธฃเธฑเธเธเธฅเธนเธเธเธฒเธขเนเธเธเธทเนเธเธ—เธตเนเธ—เธตเนเธกเธตเธเธเธเธดเธเธเธฃเธฐเธเธณ\\n`;\n}\n\nmessage += `- เธชเนเธงเธ \"เธเนเธฒเธงเธเธฒเธง\" เธฃเธฒเธเธฒเธเธฐเธญเธขเธนเนเธเธฅเธฒเธเน เน€เธซเธกเธฒเธฐเธชเธณเธซเธฃเธฑเธเธเธเธ—เธตเนเน€เธเนเธเธเธฅเธนเธเน€เธขเธญเธฐเน เธเธฒเธขเธชเนเธเนเธฃเธเธชเธตเนเธ”เนเน€เธฃเธทเนเธญเธขเน เนเธกเนเธ•เนเธญเธเธเธดเธ”เธกเธฒเธเธเนเธฐ\\n\\n`;\n\n// =========================\n// ๐’ก เธเธณเนเธเธฐเธเธณ (เธฅเธ”เธเธณเธจเธฑเธเธ—เนเธเธธเธฃเธเธดเธ)\n// =========================\n\nmessage += `๐’ก เธเธณเนเธเธฐเธเธณเน€เธฅเนเธเน เธเนเธญเธขเน เธเธฒเธเนเธเนเธช:\\n`;\nmessage += `- ๐’ฐ เธ–เนเธฒเธญเธขเธฒเธเนเธ”เนเธเธณเนเธฃเน€เธขเธญเธฐเน เนเธเธฐเธเธณเนเธซเนเน€เธเนเธ: เธเนเธฒเธงเธซเธญเธกเธกเธฐเธฅเธด ๐พ\\n`;\nmessage += `- ๐ เธ–เนเธฒเธญเธขเธฒเธเธเธฅเธนเธเนเธฅเนเธงเธเธฒเธขเธเนเธฒเธข เธเธฒเธขเธเธฅเนเธญเธ: เธเนเธฒเธงเธเธฒเธง\\n`;\nmessage += `- ๐ฏ เธ–เนเธฒเธกเธตเธเนเธญเธเนเธฒเนเธกเนเธเนเธฒเน€เธเนเธฒเธเธฃเธฐเธเธณเธกเธฒเธฃเธฑเธเธเธทเนเธญ: เธเนเธฒเธงเน€เธซเธเธตเธขเธงเธเนเน€เธเนเธเธ—เธฒเธเน€เธฅเธทเธญเธเธ—เธตเนเธ”เธตเธเนเธฐ\\n`;\nmessage += `- ๐“ เธญเธขเนเธฒเธฅเธทเธกเน€เธเนเธเธฃเธฒเธเธฒเธเนเธญเธขเน เธเธฐเธเธฑเธเธซเธงเธฐเธ”เธตเน เธเนเธญเธขเธเธฅเนเธญเธขเธเธฒเธข เธเธฐเนเธ”เนเธฃเธฒเธเธฒเธเธธเนเธกเน€เธซเธเธทเนเธญเธขเธเธฐเธเธฐ!\\n\\n`;\n\nmessage += `เธ”เธนเนเธฅเธชเธธเธเธ เธฒเธเธ”เนเธงเธขเธเธฐเธเธฐ เนเธเนเธชเน€เธเนเธเธเธณเธฅเธฑเธเนเธเนเธซเนเน€เธเธฉเธ•เธฃเธเธฃเนเธ—เธขเธ—เธธเธเธเธเธเนเธฐ ๐’`;\n\n// =========================\n// โ… Output\n// =========================\n\nreturn [\n  {\n    json: {\n      message: message\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        13360,
+        15760
+      ],
+      "id": "d5a37cf5-a589-4a28-883f-dfbb97ebf8a8",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        14032,
+        15760
+      ],
+      "id": "20fa6c17-9121-4c9d-a279-5a514c1ebfcd",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.user_id }}",
+        "text": "={{ $('Code in JavaScript4').item.json.message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        14256,
+        15760
+      ],
+      "id": "0bf714b7-89a6-42c3-ad5b-8dee225a7659",
+      "name": "Send a text message6",
+      "webhookId": "7ca88f70-5abf-42e7-b43f-8937aeac4463",
+      "credentials": {
+        "telegramApi": {
+          "id": "bbXoIbzmt5bJkb4d",
+          "name": "baisai_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst seen = new Set();\nconst result = [];\n\nfor (const item of items) {\n  const userId = item.json.user_id;\n\n  if (!seen.has(userId)) {\n    seen.add(userId);\n    result.push(item);\n  }\n}\n\nreturn result;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        13808,
+        15760
+      ],
+      "id": "798a93a3-6cd5-43b8-a814-ac169ec437e5",
+      "name": "Code in JavaScript5"
+    },
+    {
+      "parameters": {
+        "url": "=https://data.tmd.go.th/nwpapi/v1/forecast/location/daily/place?province={{ $('Loop Over Items2').item.json.location }}&fields=tc_max,tc_min,rh,rain,ws10m&date={{ $json.today }}&duration=7",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "type",
+              "value": "json"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{YOUR_API_TOKEN}}"
+            }
+          ]
+        },
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        14256,
+        15392
+      ],
+      "id": "65832292-c3ca-4b4c-b9ba-570354a1aa29",
+      "name": "HTTP Request",
+      "alwaysOutputData": false,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        14032,
+        15200
+      ],
+      "id": "8d88ba80-be09-4ee6-a059-b3e9fc180ced",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.user_id }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        14928,
+        15312
+      ],
+      "id": "20f96458-8cd9-4420-85f8-aa1643b35a69",
+      "name": "Send a text message2",
+      "webhookId": "c8c75ecc-8e4b-41b1-9639-27eb04a30254",
+      "credentials": {
+        "telegramApi": {
+          "id": "xWk7JxQpFdncxgK8",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "1666582380",
+        "text": "=โ ๏ธ เนเธเนเธเน€เธ•เธทเธญเธเธฃเธฐเธเธเธชเธ เธฒเธเธญเธฒเธเธฒเธจเธเธฐเธเธฐ  เนเธเนเธชเธ•เธฃเธงเธเธเธเธงเนเธฒเธเธฒเธฃเน€เธฃเธตเธขเธเนเธเนเธเธฒเธ Weather API เธกเธตเธเธฑเธเธซเธฒเธเนเธฐ โ—  \n\nเธฃเธฒเธขเธฅเธฐเน€เธญเธตเธขเธ”เน€เธเธทเนเธญเธเธ•เนเธ: โ€ข เนเธกเนเธชเธฒเธกเธฒเธฃเธ–เธ”เธถเธเธเนเธญเธกเธนเธฅเธเธฒเธ TMD API เนเธ”เนเธชเธณเน€เธฃเนเธ โ€ข Endpoint: /forecast/location/daily/place โ€ข Province: ${$json.location 'เนเธกเนเธ—เธฃเธฒเธ'}  \n\n๐” เธชเธดเนเธเธ—เธตเนเนเธเธฐเธเธณเนเธซเนเธ•เธฃเธงเธเธชเธญเธ: \n1. เธ•เธฃเธงเธเธชเธญเธ API Token เธงเนเธฒเธขเธฑเธเนเธเนเธเธฒเธเนเธ”เนเธญเธขเธนเนเธซเธฃเธทเธญเนเธกเน \n2. เธ•เธฃเธงเธเธชเธญเธ query parameters เน€เธเนเธ province, date, duration เธงเนเธฒเธ–เธนเธเธ•เนเธญเธเธเธฃเธเธ–เนเธงเธ \n3. เธ•เธฃเธงเธเธชเธญเธ response เธงเนเธฒเธกเธต WeatherForecasts เธซเธฃเธทเธญเนเธกเน \n4. เธ•เธฃเธงเธเธชเธญเธเธชเธ–เธฒเธเธฐ HTTP Status Code (เน€เธเนเธ 401, 403, 500)  ๐ฟ เนเธเนเธชเนเธเธฐเธเธณ: เธซเธฒเธ API เนเธกเนเธ•เธญเธเธชเธเธญเธ เธญเธฒเธเธฅเธญเธ retry เธซเธฃเธทเธญเน€เธเธดเนเธก fallback logic เน€เธเธทเนเธญเธเนเธญเธเธเธฑเธเธเนเธญเธกเธนเธฅเธเธฒเธ”เธซเธฒเธขเธเธฐเธเธฐ  เธซเธฒเธเธ•เนเธญเธเธเธฒเธฃเนเธซเนเนเธเนเธชเธเนเธงเธขเธ•เธฃเธงเธเธชเธญเธเน€เธเธดเนเธกเน€เธ•เธดเธก เนเธเนเธเธกเธฒเนเธ”เนเน€เธฅเธขเธเธฐเธเธฐ ๐’",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        14704,
+        15536
+      ],
+      "id": "c293b1aa-fb06-4473-aab2-762598fd63ba",
+      "name": "Send a text message3",
+      "webhookId": "40e1c23a-be80-4898-9b54-b2f462836e7d",
+      "credentials": {
+        "telegramApi": {
+          "id": "xWk7JxQpFdncxgK8",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        12912,
+        15360
+      ],
+      "id": "3f3a410c-7f79-439f-a1d7-2703aed48df2",
+      "name": "Schedule Trigger2"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw",
+          "mode": "list",
+          "cachedResultName": "CSI-N8N",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 977037527,
+          "mode": "list",
+          "cachedResultName": "Plant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit#gid=977037527"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        13136,
+        15360
+      ],
+      "id": "c6fa405a-c101-4ff5-bc14-a7e022008122",
+      "name": "Get row(s) in sheet4",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gbueDM6lM7sb1f5b",
+          "name": "MALIN8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\n// ===== helper =====\nfunction formatDate(d) {\n  return d.toLocaleDateString(\"en-CA\", { timeZone: \"Asia/Bangkok\" });\n}\n\nfunction normalizeLocation(loc) {\n  if (!loc) return null;\n  if (loc === \"เธเธฃเธธเธเน€เธ—เธ\") return \"เธเธฃเธธเธเน€เธ—เธเธกเธซเธฒเธเธเธฃ\";\n  return loc;\n}\n\n// normalize เนเธซเนเน€เธเนเธ date (เธ•เธฑเธ”เน€เธงเธฅเธฒ + fix timezone)\nfunction toBangkokDateOnly(dateStr) {\n  const d = new Date(dateStr);\n  return new Date(d.toLocaleDateString(\"en-US\", { timeZone: \"Asia/Bangkok\" }));\n}\n\n// ===== STEP 1: prepare date =====\nconst now = new Date();\nconst today = new Date(now.toLocaleDateString(\"en-US\", { timeZone: \"Asia/Bangkok\" }));\n\nconst tomorrow = new Date(today);\ntomorrow.setDate(tomorrow.getDate() + 1);\n\nconst todayTime = today.getTime();\nconst tomorrowTime = tomorrow.getTime();\n\n// ===== STEP 2: process =====\nconst grouped = {};\n\nfor (const item of items) {\n  const plant = item.json;\n\n  // ===== VALIDATION =====\n  if (!plant.status || plant.status.toLowerCase() !== \"active\") continue;\n\n  // โ ๏ธ เธ–เนเธฒ field เธเธตเนเนเธกเนเธกเธตเนเธ data เธเธธเธ“ โ’ comment เธญเธญเธเนเธ”เน\n  if (plant.environment && plant.environment !== \"Outdoor\") continue;\n\n  const freq = Number(plant.water_frequency_days);\n  if (!freq || isNaN(freq)) continue;\n\n  const location = normalizeLocation(plant.location);\n  if (!location) continue;\n\n  // ===== FIX เธชเธณเธเธฑเธ =====\n  const baseDate = plant.last_watered_date || plant.start_date;\n  if (!baseDate) continue;\n\n  const last = toBangkokDateOnly(baseDate);\n\n  // ===== CALCULATE =====\n  const next = new Date(last);\n  next.setDate(next.getDate() + freq);\n\n  const nextTime = next.getTime();\n\n  // เน€เธญเธฒเน€เธเธเธฒเธฐ overdue / today / tomorrow\n  if (nextTime > tomorrowTime) continue;\n\n  // ===== STATUS =====\n  let watering_status = \"future\";\n\n  if (nextTime < todayTime) {\n    watering_status = \"overdue\";\n  } else if (nextTime === todayTime) {\n    watering_status = \"today\";\n  } else if (nextTime === tomorrowTime) {\n    watering_status = \"tomorrow\";\n  }\n\n  const userId = plant.user_id;\n\n  // ===== GROUP =====\n  if (!grouped[location]) grouped[location] = {};\n  if (!grouped[location][userId]) grouped[location][userId] = [];\n\n  grouped[location][userId].push({\n    plant_id: plant.plant_id,\n    plant_species: plant.plant_species,\n    next_watering_date: formatDate(next),\n    watering_status,\n    growth_stage: plant.growth_stage || \"Unknown\",\n    growth_stage_th: plant.growth_stage_th || \"เนเธกเนเธ—เธฃเธฒเธ\",\n    start_date: plant.start_date || null\n  });\n}\n\n// ===== STEP 3: convert =====\nconst result = Object.keys(grouped).map(location => ({\n  json: {\n    location,\n    users: grouped[location]\n  }\n}));\n\n// ===== EMPTY CASE =====\nif (result.length === 0) {\n  return [{\n    json: {\n      status: \"no_data\",\n      message: \"เนเธกเนเธกเธตเธเธทเธเธ—เธตเนเธ•เนเธญเธเธฃเธ”เธเนเธณ (เธฃเธงเธก overdue / today / tomorrow)\"\n    }\n  }];\n}\n\nreturn result;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        13360,
+        15360
+      ],
+      "id": "51ff5358-0a1f-411e-8113-5f1dc7396b49",
+      "name": "Code in JavaScript6"
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date();\n\n// เนเธเน timezone เนเธ—เธข (เธชเธณเธเธฑเธเธกเธฒเธ)\nconst today = new Date(\n  now.toLocaleString(\"en-US\", { timeZone: \"Asia/Bangkok\" })\n);\n\nconst todayStr = today.toISOString().split('T')[0];\n\nreturn [{\n  json: {\n    today: todayStr\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        14032,
+        15392
+      ],
+      "id": "b38f6803-0258-4533-8c3f-dbfd82866bce",
+      "name": "Code in JavaScript7"
+    },
+    {
+      "parameters": {
+        "jsCode": "\n// Code in JavaScript8: merge weather + plant data โ’ pass forecasts_7day\nconst items = $input.all();\n\nconst weatherMap = {};\nconst userMap    = {};\n\nfor (const item of items) {\n  const data = item.json;\n  if (data.WeatherForecasts) {\n    const wf       = data.WeatherForecasts[0];\n    const province = wf.location.province;\n    weatherMap[province] = wf.forecasts || [];\n  }\n  if (data.users) {\n    userMap[data.location] = data.users;\n  }\n}\n\nconst grouped = {};\n\nfor (const province in weatherMap) {\n  const forecasts = weatherMap[province];\n  const users     = userMap[province] || {};\n\n  for (const userId in users) {\n    const key = `${userId}_${province}`;\n    if (!grouped[key]) {\n      grouped[key] = {\n        user_id: userId, location: province,\n        forecasts_7day: forecasts,\n        plant_set: new Set(), plant_details: []\n      };\n    }\n    for (const p of users[userId]) {\n      grouped[key].plant_set.add(p.plant_species);\n      grouped[key].plant_details.push(p);\n    }\n  }\n}\n\nconst result = [];\nfor (const key in grouped) {\n  const g = grouped[key];\n  result.push({ json: {\n    user_id:       g.user_id,\n    location:      g.location,\n    plant_names:   [...g.plant_set].join(', '),\n    plant_details: g.plant_details,\n    forecasts_7day: g.forecasts_7day,\n    // today rain (index 0) for backward compat\n    rain:          g.forecasts_7day[0]?.data?.rain ?? null,\n    is_raining:    (g.forecasts_7day[0]?.data?.rain ?? 0) >= 1,\n    rain_level:    g.forecasts_7day[0]?.data?.rain > 35 ? 'เธกเธฒเธ' : 'เธเนเธญเธข',\n  }});\n}\n\nif (result.length === 0) return [{ json: { status: 'no_data' } }];\nreturn result;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        14256,
+        15200
+      ],
+      "id": "28069e4f-510e-4dd5-a8e8-537a22776893",
+      "name": "Code in JavaScript8",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "batchSize": "=1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        13808,
+        15456
+      ],
+      "id": "a11234e8-3526-4604-94d4-9e995bafb7fc",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {
+        "batchSize": "={{ 1 }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        14704,
+        15200
+      ],
+      "id": "954facaa-b7f6-4d91-9a2b-b538ffe824ed",
+      "name": "Loop Over Items3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "23067d9d-a266-494f-9070-ed703ea30e6e",
+              "leftValue": "={{ $json.error.status }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        14480,
+        15536
+      ],
+      "id": "083e959f-8eaf-4cd6-a7f4-2a809e2bcd42",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "jsCode": "\n// โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\n//  RISK CALCULATOR โ€” 7-day forecast\n//  Input: output เธเธฒเธ Code in JavaScript8 (per user per province)\n//         WeatherForecasts[0].forecasts = array เธเธญเธ 7 เธงเธฑเธ\n// โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\n\nfunction getLocalDateStr(d) {\n  return new Date(d).toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });\n}\nfunction getRainLevel(rain) {\n  if (rain == null) return 'เนเธกเนเธ—เธฃเธฒเธ';\n  if (rain <= 10) return 'เธเนเธญเธข';\n  if (rain <= 35) return 'เธเธฒเธเธเธฅเธฒเธ';\n  if (rain <= 60) return 'เธกเธฒเธ';\n  return 'เธซเธเธฑเธเธกเธฒเธ';\n}\nfunction riskScore(l) { return {'เธ•เนเธณ':0,'เธเธฒเธเธเธฅเธฒเธ':1,'เธชเธนเธ':2,'เธชเธนเธเธกเธฒเธ':3}[l]??0; }\nfunction scoreToLevel(s) { return ['เธ•เนเธณ','เธเธฒเธเธเธฅเธฒเธ','เธชเธนเธ','เธชเธนเธเธกเธฒเธ'][Math.min(s,3)]; }\nfunction riskIcon(l) { return {'เธ•เนเธณ':'๐ข','เธเธฒเธเธเธฅเธฒเธ':'๐ก','เธชเธนเธ':'๐ ','เธชเธนเธเธกเธฒเธ':'๐”ด'}[l]||'โช'; }\n\nfunction getGrowthStage(startDateStr) {\n  if (!startDateStr) return { stage: 'unknown', daysOld: null };\n  const d = Math.floor((Date.now() - new Date(startDateStr)) / 86400000);\n  if (d < 0)   return { stage: 'pre_plant',   daysOld: d };\n  if (d <= 14) return { stage: 'germination', daysOld: d };\n  if (d <= 30) return { stage: 'seedling',    daysOld: d };\n  if (d <= 60) return { stage: 'tillering',   daysOld: d };\n  if (d <= 80) return { stage: 'booting',     daysOld: d };\n  if (d <= 95) return { stage: 'heading',     daysOld: d };\n  if (d <= 120) return { stage: 'ripening',   daysOld: d };\n  return { stage: 'harvest', daysOld: d };\n}\n\nconst STAGE_TH = {\n  pre_plant:'เธเนเธญเธเธเธฅเธนเธ', germination:'เธฃเธฐเธขเธฐเธเธญเธ', seedling:'เธฃเธฐเธขเธฐเธเธฅเนเธฒ',\n  tillering:'เธฃเธฐเธขเธฐเนเธ•เธเธเธญ', booting:'เธฃเธฐเธขเธฐเธ•เธฑเนเธเธ—เนเธญเธ', heading:'เธฃเธฐเธขเธฐเธญเธญเธเธฃเธงเธ',\n  ripening:'เธฃเธฐเธขเธฐเธชเธธเธเนเธเน', harvest:'เธเธฃเนเธญเธกเน€เธเนเธเน€เธเธตเนเธขเธง', unknown:'เนเธกเนเธ—เธฃเธฒเธ'\n};\n\nfunction alertsForDay(stage, rain, isRaining) {\n  const a = [];\n  if (rain > 50) a.push({ level:'เธชเธนเธเธกเธฒเธ', msg:`เธเธเธซเธเธฑเธเธกเธฒเธ (${rain}mm) เน€เธชเธตเนเธขเธเธเนเธณเธ—เนเธงเธก` });\n  if (stage==='heading' && isRaining && rain>15) a.push({ level:'เธชเธนเธเธกเธฒเธ', msg:'เธฃเธฐเธขเธฐเธญเธญเธเธฃเธงเธ+เธเธ: เน€เธชเธตเนเธขเธเนเธฃเธเนเธซเธกเนเธฃเธธเธเนเธฃเธ' });\n  if (stage==='booting'  && isRaining && rain>25) a.push({ level:'เธชเธนเธ',    msg:'เธฃเธฐเธขเธฐเธ•เธฑเนเธเธ—เนเธญเธ+เธเธเธเธธเธ: เน€เธชเธตเนเธขเธเนเธฃเธเนเธซเธกเนเธเธญเธฃเธงเธ' });\n  if (stage==='booting'  && !isRaining) a.push({ level:'เธชเธนเธ', msg:'เธฃเธฐเธขเธฐเธ•เธฑเนเธเธ—เนเธญเธ: เธเธฒเธ”เธเนเธณเธเธฃเธฐเธ—เธเธเธฅเธเธฅเธดเธ•' });\n  if (stage==='tillering'&& isRaining && rain>40) a.push({ level:'เธชเธนเธ', msg:'เธฃเธฐเธขเธฐเนเธ•เธเธเธญ+เธเธเธซเธเธฑเธ: เน€เธชเธตเนเธขเธเธเธฒเธเนเธเน€เธเนเธฒ' });\n  if (stage==='harvest') a.push({ level:'เธเธฒเธเธเธฅเธฒเธ', msg:'เธ–เธถเธเธฃเธฐเธขเธฐเน€เธเนเธเน€เธเธตเนเธขเธง เธเธงเธฃเธฃเธตเธเน€เธเนเธ!' });\n  return a;\n}\n\nconst items = $input.all();\nconst result = [];\n\nfor (const item of items) {\n  const d = item.json;\n  if (d.status === 'no_data') { result.push(item); continue; }\n\n  const forecasts = (d.forecasts_7day || []);\n  const plants    = d.plant_details || [];\n\n  // เธเธณเธเธงเธ“ stage เธเธญเธเนเธ•เนเธฅเธฐเนเธเธฅเธ\n  const stageInfoList = plants.map(p => {\n    const { stage, daysOld } = getGrowthStage(p.start_date);\n    return { plant_id:p.plant_id, rice_type:p.plant_species||p.rice_type, stage, daysOld, stageLabel:STAGE_TH[stage]||stage };\n  });\n\n  // เธงเธดเน€เธเธฃเธฒเธฐเธซเนเธ—เธฑเนเธ 7 เธงเธฑเธ\n  const dayRows = [];\n  const allAlerts = [];\n\n  for (const fc of forecasts) {\n    const dateStr = (fc.time||'').split('T')[0];\n    const rain    = fc.data?.rain ?? 0;\n    const tcMax   = fc.data?.tc_max ?? null;\n    const tcMin   = fc.data?.tc_min ?? null;\n    const rh      = fc.data?.rh ?? null;\n    const isRaining = rain >= 1;\n    const rl      = getRainLevel(rain);\n\n    // alerts เธ—เธธเธเนเธเธฅเธเนเธเธงเธฑเธเธเธตเน\n    const dayAlerts = [];\n    for (const s of stageInfoList) {\n      dayAlerts.push(...alertsForDay(s.stage, rain, isRaining));\n    }\n\n    const maxDayScore = dayAlerts.reduce((m,a)=>Math.max(m,riskScore(a.level)),0);\n    const dayRiskLevel = scoreToLevel(maxDayScore);\n\n    let icon = 'โ€๏ธ';\n    if (rain > 50) icon = 'โ๏ธ';\n    else if (rain > 20) icon = '๐ง๏ธ';\n    else if (rain > 5)  icon = '๐ฆ๏ธ';\n    else if (rain > 0)  icon = 'โ…';\n\n    const advice = dayAlerts.length > 0\n      ? dayAlerts.sort((a,b)=>riskScore(b.level)-riskScore(a.level))[0].msg\n      : (isRaining ? 'เธเธ”เธฃเธ”เธเนเธณ เธเธเธ•เธ' : 'เธเธฅเธญเธ”เธ เธฑเธขเธ”เธต');\n\n    dayRows.push({ dateStr, icon, tcMax, tcMin, rh, rain, rainLevel:rl, riskLevel:dayRiskLevel, advice });\n    allAlerts.push(...dayAlerts);\n  }\n\n  // เธชเธฃเนเธฒเธเธเนเธญเธเธงเธฒเธก 7 เธงเธฑเธ\n  const loc = d.location || '';\n  let msg = `๐พ เธเธขเธฒเธเธฃเธ“เน 7 เธงเธฑเธ โ€” ${loc}\\n`;\n  msg += `(เธญเธฑเธเน€เธ”เธ•เธ—เธธเธเน€เธเนเธฒ 07:00 เธ.)\\n\\n`;\n\n  for (const r of dayRows) {\n    const tmp = (r.tcMax!=null&&r.tcMin!=null) ? ` ${r.tcMin}-${r.tcMax}ยฐC` : '';\n    const humid = r.rh!=null ? ` เธเธงเธฒเธกเธเธทเนเธ ${r.rh}%` : '';\n    msg += `${r.icon} ${r.dateStr}${tmp}${humid} เธเธ ${r.rain}mm (${r.rainLevel})\\n`;\n    msg += `   ${riskIcon(r.riskLevel)} ${r.riskLevel} โ€” ${r.advice}\\n`;\n  }\n\n  // เธชเธฃเธธเธเนเธเธฅเธ\n  if (stageInfoList.length > 0) {\n    msg += `\\n๐“ เธชเธ–เธฒเธเธฐเนเธเธฅเธเธเธญเธเธเธธเธ“:\\n`;\n    for (const s of stageInfoList) {\n      msg += `๐ฑ ${s.rice_type||'เธเนเธฒเธง'}: ${s.stageLabel}`;\n      if (s.daysOld!=null) msg += ` (เธญเธฒเธขเธธ ${s.daysOld} เธงเธฑเธ)`;\n      msg += '\\n';\n    }\n  }\n\n  // เธซเธฒ worst day\n  const worst = [...dayRows].sort((a,b)=>riskScore(b.riskLevel)-riskScore(a.riskLevel))[0];\n  if (worst && riskScore(worst.riskLevel) >= 2) {\n    msg += `\\nโ ๏ธ เนเธเนเธชเนเธเธฐเธเธณ: เธฃเธฐเธงเธฑเธเธเนเธงเธ ${worst.dateStr} โ€” ${worst.advice}\\n`;\n  }\n\n  msg += `\\nเนเธเนเธชเน€เธเนเธเธเธณเธฅเธฑเธเนเธเนเธซเนเธเธฐเธเธฐ ๐’`;\n\n  const overallRisk = scoreToLevel(allAlerts.reduce((m,a)=>Math.max(m,riskScore(a.level)),0));\n\n  result.push({\n    json: { ...d, message: msg, risk_level: overallRisk, stage_info: stageInfoList, day_forecast: dayRows }\n  });\n}\n\nreturn result;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        14480,
+        15200
+      ],
+      "id": "9b5980c2-712a-4ad2-8694-f29beb954d55",
+      "name": "Risk Calculator",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "\n// โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\n//  ๐พ STAGE AUTO-UPDATE โ€” เธเธณเธเธงเธ“ growth_stage เธญเธฑเธ•เนเธเธกเธฑเธ•เธด\n//\n//  Input : item เธเธฒเธ Send a text message2 (1 item เธ•เนเธญ 1 user)\n//          เธเธถเนเธเธกเธต plant_details: [ { plant_id, plant_species,\n//                                    start_date, end_date,\n//                                    status, ... } ]\n//\n//  Output: flatten เน€เธเนเธ 1 item เธ•เนเธญ 1 plant_id\n//          เธเธฃเนเธญเธก field เธ—เธตเนเธ•เนเธญเธ update เธฅเธ Sheet:\n//            - plant_id       (เนเธเน match)\n//            - growth_stage   (เธเธณเธเธงเธ“เธเธฒเธ start_date)\n//            - status         (Active / Harvested / Overdue)\n//            - days_old       (เธญเธฒเธขเธธเนเธเธงเธฑเธ)\n// โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\n\n// โ”€โ”€ map เธเธฃเธฐเน€เธ เธ—เธเนเธฒเธง โ’ เธเนเธงเธเน€เธงเธฅเธฒเธชเธธเธ (เธงเธฑเธ) โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€\n// เธญเนเธฒเธเธญเธดเธเธเธฒเธเธเนเธญเธกเธนเธฅเธเนเธฒเธงเธ—เธตเนเธฃเธฐเธเธธ (เธเนเธฒเธงเธเธฒเธง/เน€เธซเธเธตเธขเธง/เธซเธญเธกเธกเธฐเธฅเธด/เธซเธญเธกเธเธ—เธธเธก)\nfunction getRiceDuration(species) {\n  const s = (species || '').toLowerCase();\n  if (s.includes('เธซเธญเธกเธกเธฐเธฅเธด'))  return { min: 105, max: 130 }; // เธเนเธฒเธงเธเธฒเธเธต เธญเธฒเธขเธธเธขเธฒเธง\n  if (s.includes('เธเธ—เธธเธก'))      return { min: 90,  max: 110 }; // เธเธ.เธเธ—เธธเธก เธญเธฒเธขเธธเธชเธฑเนเธ-เธเธฅเธฒเธ\n  if (s.includes('เธเธ'))        return { min: 90,  max: 115 };\n  if (s.includes('เน€เธซเธเธตเธขเธง'))    return { min: 110, max: 130 };\n  return { min: 90, max: 120 }; // เธเนเธฒเธงเธเธฒเธงเธ—เธฑเนเธงเนเธ / default\n}\n\n// โ”€โ”€ เธเธณเธเธงเธ“ growth stage เธเธฒเธ start_date + rice type โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€\nfunction getGrowthStage(startDateStr, endDateStr, species) {\n  if (!startDateStr) return { stage: 'Unknown', status: 'Active', daysOld: null };\n\n  const now   = new Date();\n  const start = new Date(startDateStr);\n  const daysOld = Math.floor((now - start) / (1000 * 60 * 60 * 24));\n\n  // เธ–เนเธฒเธกเธต end_date เนเธฅเธฐเน€เธฅเธขเนเธฅเนเธง โ’ Harvested เธซเธฃเธทเธญ Overdue\n  if (endDateStr) {\n    const end = new Date(endDateStr);\n    const daysToEnd = Math.floor((end - now) / (1000 * 60 * 60 * 24));\n    if (daysToEnd < -14) {\n      return { stage: 'Overdue', status: 'Overdue', daysOld };\n    }\n  }\n\n  const { max } = getRiceDuration(species);\n\n  if (daysOld < 0)    return { stage: 'Pre-Plant',   status: 'Active', daysOld };\n  if (daysOld <= 14)  return { stage: 'Germination', status: 'Active', daysOld };\n  if (daysOld <= 30)  return { stage: 'Seedling',    status: 'Active', daysOld };\n  if (daysOld <= 60)  return { stage: 'Tillering',   status: 'Active', daysOld };\n  if (daysOld <= Math.round(max * 0.65))\n                      return { stage: 'Booting',     status: 'Active', daysOld };\n  if (daysOld <= Math.round(max * 0.80))\n                      return { stage: 'Heading',     status: 'Active', daysOld };\n  if (daysOld <= max) return { stage: 'Ripening',    status: 'Active', daysOld };\n\n  // เน€เธเธดเธ max โ’ เธ–เธถเธเน€เธงเธฅเธฒเน€เธเนเธเน€เธเธตเนเธขเธง\n  return { stage: 'Ready to Harvest', status: 'Harvested', daysOld };\n}\n\n// โ”€โ”€ label เธ เธฒเธฉเธฒเนเธ—เธข โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€\nconst STAGE_TH = {\n  'Pre-Plant':        'เธเนเธญเธเธเธฅเธนเธ',\n  'Germination':      'เธฃเธฐเธขเธฐเธเธญเธ',\n  'Seedling':         'เธฃเธฐเธขเธฐเธเธฅเนเธฒ',\n  'Tillering':        'เธฃเธฐเธขเธฐเนเธ•เธเธเธญ',\n  'Booting':          'เธฃเธฐเธขเธฐเธ•เธฑเนเธเธ—เนเธญเธ',\n  'Heading':          'เธฃเธฐเธขเธฐเธญเธญเธเธฃเธงเธ',\n  'Ripening':         'เธฃเธฐเธขเธฐเธชเธธเธเนเธเน',\n  'Ready to Harvest': 'เธเธฃเนเธญเธกเน€เธเนเธเน€เธเธตเนเธขเธง',\n  'Harvested':        'เน€เธเนเธเน€เธเธตเนเธขเธงเนเธฅเนเธง',\n  'Overdue':          'เน€เธเธดเธเธเธณเธซเธเธ”',\n  'Unknown':          'เนเธกเนเธ—เธฃเธฒเธ',\n};\n\n// โ”€โ”€ Bangkok date string โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€โ”€\nfunction todayBKK() {\n  return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Bangkok' });\n}\n\n// โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\n// MAIN\n// โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•โ•\nconst items = $input.all();\nconst result = [];\n\nfor (const item of items) {\n  const d = item.json;\n\n  // plant_details เธกเธฒเธเธฒเธ Risk Calculator (เธเธถเนเธเธฃเธฑเธเธ•เนเธญเธเธฒเธ Code in JavaScript8)\n  const plants = d.plant_details || [];\n\n  if (plants.length === 0) continue; // เนเธกเนเธกเธตเนเธเธฅเธ โ’ เธเนเธฒเธก\n\n  for (const plant of plants) {\n    const pid     = plant.plant_id;\n    const species = plant.plant_species || plant.rice_type || '';\n    const startD  = plant.start_date   || null;\n    const endD    = plant.end_date     || null;\n    const currStatus = (plant.status   || 'Active');\n\n    // เธเนเธฒเธกเนเธเธฅเธเธ—เธตเนเธ–เธนเธ Harvested/Removed เนเธเนเธฅเนเธง (user เธญเธฑเธเน€เธ”เธ•เน€เธญเธ)\n    if (['Harvested', 'Removed', 'Inactive'].includes(currStatus)) continue;\n\n    const { stage, status: newStatus, daysOld } = getGrowthStage(startD, endD, species);\n    const stageTH = STAGE_TH[stage] || stage;\n\n    result.push({\n      json: {\n        plant_id:     pid,\n        growth_stage: stage,\n        growth_stage_th: stageTH,\n        status:       newStatus,\n        days_old:     daysOld,\n        updated_at:   todayBKK(),\n        // pass-through เธ—เธตเนเธ•เนเธญเธเนเธเนเนเธ Sheet (match key)\n        _species:     species,\n        _user_id:     d.user_id || plant.user_id || '',\n      }\n    });\n  }\n}\n\n// เธ–เนเธฒเนเธกเนเธกเธตเนเธเธฅเธ Active เน€เธฅเธข โ’ เธชเนเธ dummy เน€เธเธทเนเธญเนเธกเนเนเธซเน flow เธซเธขเธธเธ”\nif (result.length === 0) {\n  return [{ json: { _no_plants: true } }];\n}\n\nreturn result;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        14928,
+        15120
+      ],
+      "id": "ead60a31-9e8a-4c72-a964-d30f63bee80f",
+      "name": "Stage Auto-Update",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "batchSize": "=1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        15152,
+        15120
+      ],
+      "id": "31625f05-b865-43c2-9a85-4014372bf168",
+      "name": "Loop Stage Update"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "check-no-plants-flag",
+              "leftValue": "={{ $json._no_plants }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        15376,
+        15056
+      ],
+      "id": "67f0f6f3-7dd0-44e4-8ef0-cd98f99f0dc6",
+      "name": "If Has Plant"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw",
+          "mode": "list",
+          "cachedResultName": "CSI-N8N",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 977037527,
+          "mode": "list",
+          "cachedResultName": "Plant",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit#gid=977037527"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "plant_id": "={{ $json.plant_id }}",
+            "growth_stage": "={{ $json.growth_stage }}",
+            "status": "={{ $json.status }}",
+            "updated_at": "={{ $json.updated_at }}",
+            "growth_stage_th": "={{ $json.growth_stage_th }}"
+          },
+          "matchingColumns": [
+            "plant_id"
+          ],
+          "schema": [
+            {
+              "id": "plant_id",
+              "displayName": "plant_id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "growth_stage",
+              "displayName": "growth_stage",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "harvest_date",
+              "displayName": "harvest_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "growth_stage_th",
+              "displayName": "growth_stage_th",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        15600,
+        15120
+      ],
+      "id": "96d003af-8900-42f8-af54-f4eff3fb59bc",
+      "name": "Update Stage in Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gbueDM6lM7sb1f5b",
+          "name": "MALIN8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a2dc1b03-8557-4474-9419-0507aee29ecb",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "=no_data",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        13584,
+        15360
+      ],
+      "id": "9ee74f83-781b-4bb7-950b-0d910ac42ff7",
+      "name": "If4"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        12912,
+        15984
+      ],
+      "id": "7239c76f-0e1b-4806-8b83-5ae2fb51f244",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://mex.moc.go.th/page/dit/getcheckprice/type/W/catid/9",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/x-www-form-urlencoded; charset=UTF-8"
+            },
+            {
+              "name": "X-Requested-With",
+              "value": "XMLHttpRequest"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            },
+            {
+              "name": "Referer",
+              "value": "https://mex.moc.go.th/page/dit/checkprice/type/W/catid/9"
+            },
+            {
+              "name": "Origin",
+              "value": "https://mex.moc.go.th"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json, text/javascript, */*; q=0.01"
+            },
+            {
+              "name": "Cookie",
+              "value": "={{ $('Extract Cookie').item.json.cookie }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/x-www-form-urlencoded",
+        "body": "=draw=1&columns%5B0%5D%5Bdata%5D=NO&columns%5B0%5D%5Bname%5D=&columns%5B0%5D%5Bsearchable%5D=true&columns%5B0%5D%5Borderable%5D=false&columns%5B0%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B0%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B1%5D%5Bdata%5D=NAME&columns%5B1%5D%5Bname%5D=&columns%5B1%5D%5Bsearchable%5D=true&columns%5B1%5D%5Borderable%5D=true&columns%5B1%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B1%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B2%5D%5Bdata%5D=PRICE&columns%5B2%5D%5Bname%5D=&columns%5B2%5D%5Bsearchable%5D=true&columns%5B2%5D%5Borderable%5D=false&columns%5B2%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B2%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B3%5D%5Bdata%5D=AVG&columns%5B3%5D%5Bname%5D=&columns%5B3%5D%5Bsearchable%5D=true&columns%5B3%5D%5Borderable%5D=false&columns%5B3%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B3%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B4%5D%5Bdata%5D=UNIT&columns%5B4%5D%5Bname%5D=&columns%5B4%5D%5Bsearchable%5D=true&columns%5B4%5D%5Borderable%5D=false&columns%5B4%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B4%5D%5Bsearch%5D%5Bregex%5D=false&columns%5B5%5D%5Bdata%5D=NAME&columns%5B5%5D%5Bname%5D=&columns%5B5%5D%5Bsearchable%5D=true&columns%5B5%5D%5Borderable%5D=false&columns%5B5%5D%5Bsearch%5D%5Bvalue%5D=&columns%5B5%5D%5Bsearch%5D%5Bregex%5D=false&order%5B0%5D%5Bcolumn%5D=1&order%5B0%5D%5Bdir%5D=asc&start=0&length=25&search%5Bvalue%5D=&search%5Bregex%5D=false&catid=9&type=W&date={{ $now.weekday === 1 ? $now.minus({days: 3}).toFormat('yyyy-MM-dd') : $now.weekday === 7 ? $now.minus({days: 2}).toFormat('yyyy-MM-dd') : $now.minus({days: 1}).toFormat('yyyy-MM-dd') }}",
+        "options": {}
+      },
+      "id": "ca0e0f9c-8a0e-4869-a667-f875b1454fe7",
+      "name": "Fetch MOC Prices",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        13584,
+        15984
+      ],
+      "alwaysOutputData": false,
+      "retryOnFail": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. เธฃเธฑเธเธเนเธญเธกเธนเธฅเนเธฅเธฐเนเธเธฅเธเน€เธเนเธ JSON \n// (เน€เธเนเธ typeof เน€เธเธทเนเธญเนเธเธเธฃเธ“เธตเธ—เธตเน n8n เธเธฑเนเธ rawData เน€เธเนเธ Object เธกเธฒเนเธซเนเนเธฅเนเธง เธเธฐเนเธ”เนเนเธกเน Error)\nconst rawData = $input.first().json.data;\nconst parsedJson = typeof rawData === 'string' ? JSON.parse(rawData) : rawData;\n// เธฃเธญเธเธฃเธฑเธเนเธเธฃเธเธชเธฃเนเธฒเธเน€เธเธทเนเธญเธงเนเธฒ parsedJson เน€เธเนเธ array เนเธ”เธขเธ•เธฃเธ เธซเธฃเธทเธญเธเนเธญเธเธญเธขเธนเนเนเธ .data\nconst items = parsedJson.data || parsedJson;\n\n// 2. Keyword เธชเธดเธเธเนเธฒเธขเธญเธ”เธเธดเธขเธก\nconst popularKeywords = [\n  \"เธเนเธฒเธงเธเธฒเธง\",\n  \"เธเนเธฒเธงเธซเธญเธกเธกเธฐเธฅเธด\",\n  \"เธเนเธฒเธงเธซเธญเธกเธเธ—เธธเธกเธเธฒเธเธต\", // เน€เธเธดเนเธกเธเนเธฒเธงเธซเธญเธกเธเธ—เธธเธกเธฏ (เธ—เธฒเธเน€เธฅเธทเธญเธเธขเธญเธ”เธฎเธดเธ•)\n  \"เธเนเธฒเธงเธชเธฒเธฃเน€เธซเธเธตเธขเธง\"     // เนเธเนเธเธฒเธ \"เธเนเธฒเธงเน€เธซเธเธตเธขเธง\" เน€เธเธทเนเธญเนเธซเนเธ•เธฃเธเธเธฑเธเธเธทเนเธญเนเธ Data\n];\n\n// 3. Filter + Format\nconst result = items\n  .filter(item => {\n    const name = item.NAME;\n\n    // เธ•เนเธญเธเธกเธต keyword เธเธฅเธธเนเธกเธชเธดเธเธเนเธฒเธขเธญเธ”เธเธดเธขเธก\n    const isPopular = popularKeywords.some(k => name.includes(k));\n\n    // เธ•เธฑเธ”เธเธญเธเธ—เธตเนเนเธกเนเนเธเนเธญเธญเธ (Noise)\n    const isNoise = name.includes(\"เธเธฅเธฒเธขเธเนเธฒเธง\") || \n                    name.includes(\"เธฃเธณ\") || \n                    name.includes(\"เนเธเนเธ\") ||\n                    name.includes(\"เธเนเธฒเธงเน€เธเธฅเธทเธญเธ\") || // เธ”เธฑเธ \"เธเนเธฒเธงเน€เธเธฅเธทเธญเธเธซเธญเธกเธกเธฐเธฅเธด\" เนเธกเนเนเธซเนเธซเธฅเธธเธ”เน€เธเนเธฒเธกเธฒ\n                    name.includes(\"เธเนเธฒเธงเธเธถเนเธ\") ||  // เธเนเธฒเธงเธเธถเนเธเธเธเนเธ—เธขเนเธกเนเธเนเธญเธขเธเธดเธขเธกเธเธฃเธดเนเธ เธเนเธ”เธขเธ•เธฃเธ\n                    name.includes(\"เธเธฃเธฐเธชเธญเธ\");      \n\n    return isPopular && !isNoise;\n  })\n  .map(item => ({\n    json: {\n      id: item.NO,\n      name: item.NAME,\n      price_range: item.PRICE,\n      price_avg: parseFloat(item.AVG.replace(/,/g, '')),\n      unit: item.UNIT,\n      reference_id: item.DT_RowId\n    }\n  }));\n\nreturn result;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        13808,
+        15984
+      ],
+      "id": "3cc956e3-9263-42cb-974c-2337275698c8",
+      "name": "Code in JavaScript3",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        14032,
+        15984
+      ],
+      "id": "f42626df-dbf7-44ec-951f-1cd03e8692e1",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw",
+          "mode": "list",
+          "cachedResultName": "CSI-N8N",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1615475223,
+          "mode": "list",
+          "cachedResultName": "Plant_Price",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1j_YzkpRqVRFSM2br6axpOr4OTVSqBs3f2dtKMz4rrgw/edit#gid=1615475223"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "name": "={{ $json.name }}",
+            "price_range": "={{ $json.price_range }}",
+            "price_avg": "={{ $json.price_avg }}",
+            "unit": "={{ $json.unit }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "price_range",
+              "displayName": "price_range",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "price_avg",
+              "displayName": "price_avg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "unit",
+              "displayName": "unit",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "recorded_date",
+              "displayName": "recorded_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        14256,
+        15984
+      ],
+      "id": "5657473c-9822-4cb1-a80c-68177e2f4b54",
+      "name": "Append or update row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gbueDM6lM7sb1f5b",
+          "name": "MALIN8N"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://mex.moc.go.th/page/dit/checkprice/type/W/catid/9",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"
+            },
+            {
+              "name": "Accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "e04c71f4-b849-46ca-8df8-a839917ba435",
+      "name": "Get MOC Cookie",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        13136,
+        15984
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const headers = $input.first().json.headers;\n\n// เธซเธฒ set-cookie header (เธญเธฒเธเน€เธเนเธ array เธซเธฃเธทเธญ string)\nlet setCookieHeader = headers['set-cookie'] || headers['Set-Cookie'] || '';\n\n// เธ–เนเธฒเน€เธเนเธ array เนเธซเน join เธเธฑเธ\nif (Array.isArray(setCookieHeader)) {\n  setCookieHeader = setCookieHeader.join('; ');\n}\n\n// เนเธเธฐเน€เธญเธฒเนเธเน key=value เธ•เธฑเธ”เธเธงเธ path, expires, HttpOnly เธ—เธดเนเธ\nconst cookieParts = [];\nconst rawCookies = Array.isArray(headers['set-cookie'] || headers['Set-Cookie'])\n  ? (headers['set-cookie'] || headers['Set-Cookie'])\n  : [setCookieHeader];\n\nfor (const c of rawCookies) {\n  const part = c.split(';')[0].trim();\n  if (part) cookieParts.push(part);\n}\n\nconst cookieString = cookieParts.join('; ');\n\nreturn [{ json: { cookie: cookieString } }];"
+      },
+      "id": "50051720-35e4-4f6e-86c6-d77b9b54af34",
+      "name": "Extract Cookie",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        13360,
+        15984
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "SC Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "SC Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Get Users Sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC Get Plants Sheet": {
+      "main": [
+        [
+          {
+            "node": "SC Get Price Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC Get Price Data": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC Format Plants String": {
+      "main": [
+        [
+          {
+            "node": "SC Parse Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC Parse Command": {
+      "main": [
+        [
+          {
+            "node": "SC Command Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC Command Switch": {
+      "main": [
+        [
+          {
+            "node": "SC AI Create",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SC AI Update",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SC AI Ask",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SC AI Delete",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SC Format Price",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SC Format My Plants",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SC Send Help",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SC Send Unknown",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SC AI Confirm Update",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SC AI Confirm Delete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC AI Create": {
+      "main": [
+        [
+          {
+            "node": "SC Parse Create",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC Parse Create": {
+      "main": [
+        [
+          {
+            "node": "SC Check Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC Gen Plant ID": {
+      "main": [
+        [
+          {
+            "node": "SC Append Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC Append Row": {
+      "main": [
+        [
+          {
+            "node": "SC Send Create",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC AI Update": {
+      "main": [
+        [
+          {
+            "node": "SC Parse Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC Parse Update": {
+      "main": [
+        [
+          {
+            "node": "SC Send Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC AI Ask": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC AI Delete": {
+      "main": [
+        [
+          {
+            "node": "SC Parse Update1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC Format Price": {
+      "main": [
+        [
+          {
+            "node": "SC Send Price",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC Format My Plants": {
+      "main": [
+        [
+          {
+            "node": "SC Send My Plants",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "SC AI Delete",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "SC AI Ask",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "SC AI Update",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "SC AI Create",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "SC AI Confirm Update",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "SC AI Confirm Delete",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript10": {
+      "main": [
+        [
+          {
+            "node": "SC Format Plants String",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC Check Complete": {
+      "main": [
+        [
+          {
+            "node": "SC Gen Plant ID",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SC Send Incomplete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC AI Confirm Update": {
+      "main": [
+        [
+          {
+            "node": "SC Parse Confirm Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC Parse Confirm Update": {
+      "main": [
+        [
+          {
+            "node": "SC Sheet Confirm Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC Sheet Confirm Update": {
+      "main": [
+        [
+          {
+            "node": "SC Send Confirm Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC AI Confirm Delete": {
+      "main": [
+        [
+          {
+            "node": "SC Parse Confirm Delete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC Parse Confirm Delete": {
+      "main": [
+        [
+          {
+            "node": "SC Sheet Confirm Delete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC Sheet Confirm Delete": {
+      "main": [
+        [
+          {
+            "node": "SC Send Confirm Delete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check User Exists1": {
+      "main": [
+        [
+          {
+            "node": "If New User1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If New User1": {
+      "main": [
+        [
+          {
+            "node": "Create New User1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SC Get Plants Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Users Sheet1": {
+      "main": [
+        [
+          {
+            "node": "Check User Exists1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create New User1": {
+      "main": [
+        [
+          {
+            "node": "Send Welcome Message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Welcome Message1": {
+      "main": [
+        [
+          {
+            "node": "SC Send Help",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "SC AI Create",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "SC AI Update",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "SC AI Ask",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "SC AI Delete",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "SC AI Confirm Update",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "SC AI Confirm Delete",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript11": {
+      "main": [
+        [
+          {
+            "node": "SC Send Ask",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC Parse Update1": {
+      "main": [
+        [
+          {
+            "node": "SC Send Delete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Send a text message6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message6": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript5": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet4": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript6": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript7": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript8": {
+      "main": [
+        [
+          {
+            "node": "Risk Calculator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [
+          {
+            "node": "Stage Auto-Update",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Risk Calculator": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stage Auto-Update": {
+      "main": [
+        [
+          {
+            "node": "Loop Stage Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Stage Update": {
+      "main": [
+        [],
+        [
+          {
+            "node": "If Has Plant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Has Plant": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Update Stage in Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Stage in Sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Stage Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get MOC Cookie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch MOC Prices": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Append or update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get MOC Cookie": {
+      "main": [
+        [
+          {
+            "node": "Extract Cookie",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Cookie": {
+      "main": [
+        [
+          {
+            "node": "Fetch MOC Prices",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SC Send Confirm Delete": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "605a0805-ce0c-4229-826a-3d016368ec24",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c6ea936472e83d981fde2e1f0a8b6d61fe0dc6b54f3a7d1b0fae6f08b4334cee"
+  },
+  "id": "k6Yw5mwKpVmMFUTF",
+  "tags": []
+}

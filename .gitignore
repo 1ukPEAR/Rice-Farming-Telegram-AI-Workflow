@@ -1,0 +1,14 @@
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local n8n/runtime files
+.env
+*.env
+n8n-local/
+
+# Temporary files
+~$*.docx
+*.tmp
