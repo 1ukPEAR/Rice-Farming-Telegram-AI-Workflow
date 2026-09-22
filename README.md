@@ -1,29 +1,51 @@
-# 🌾 Rice Farming Telegram AI Workflow
+# Rice Farming Telegram AI Workflow
 
-An AI-powered Telegram workflow designed to support rice farmers
-with agricultural information and assistance.
+An n8n workflow that provides a Telegram-based rice farming assistant. The bot records rice field data, answers agriculture-related questions through an OpenAI-compatible chat model, tracks rice price data, sends daily reminders, and stores operational data in Google Sheets.
 
-### 🛠️ Tech Stack
+## Overview
 
-n8n · Telegram Bot · AI · Google Sheets
+The system is a Telegram-based agricultural assistant designed to support rice farming operations through workflow automation and AI integration.
 
-### 👩‍💻 My Role
+Users can manage rice field information, ask agriculture-related questions, receive farming reminders, assess farming risks, and access rice price information through Telegram.
 
-**System Tester & Documentation**
+## Features
 
-- Tested system workflows and functions
-- Prepared system documentation
-- Verified system behavior and workflow results
+- Telegram bot command handling
+- Add, update, delete, and list rice field records
+- AI-assisted natural language parsing for field data operations
+- Agriculture Q&A through an OpenAI-compatible chat model
+- Google Sheets data storage
+- Daily reminder and risk assessment workflow
+- Scheduled rice price scraping and price history updates
+- Automatic rice growth stage updates
 
-### ✨ Key Features
+## Tech Stack
 
-- 🤖 AI-powered agricultural Q&A
-- 🌱 Rice farming information
-- 🔔 Farming reminders
-- 💰 Rice price information
+| Component | Technology |
+| --- | --- |
+| Workflow Engine | n8n |
+| Messaging | Telegram Bot API |
+| AI | OpenAI-compatible Chat Model |
+| Data Storage | Google Sheets |
+| External Data | HTTP Request |
+| Data Source | MOC Rice Price Data |
 
-### 📌 Project Type
+## My Contribution
 
-University Team Project
+### Workflow Developer / AI Integration
 
-> This repository is a fork of the original team repository.
+Worked as a Workflow Developer and AI Integration member as part of the development team.
+
+- Tested system operations and checked errors across individual workflows
+- Tested Telegram Bot functionality and verified system responses
+- Prepared documentation explaining system workflows and operating procedures
+
+## Project Structure
+
+```text
+CSI_N8N_Final-main/
+├── Wheat Assistance Workflow CSI — v4.json
+├── CSI-N8N.xlsx
+├── install_guide.docx
+├── README.md
+└── DATABASE_SCHEMA.md
